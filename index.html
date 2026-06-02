@@ -1,0 +1,3143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bobwod</title>
+<style>
+:root {
+  --bg: #0d0d12;
+  --s1: #16161f;
+  --s2: #1e1e2a;
+  --s3: #272736;
+  --accent: #e05c2a;
+  --accent2: #5b8cf7;
+  --green: #3ecf74;
+  --text: #e8e8ee;
+  --text2: #8888a8;
+  --border: #2a2a3a;
+  --r: 10px;
+  --font: 'Segoe UI', system-ui, sans-serif;
+  --bottom-nav-h: 0px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100vh;}
+a{color:var(--accent2);}
+
+/* NAV */
+nav{background:var(--s1);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 16px;height:52px;gap:2px;position:sticky;top:0;z-index:50;}
+.logo{font-weight:800;font-size:1.1rem;color:var(--accent);margin-right:auto;letter-spacing:-0.5px;}
+.nb{background:none;border:none;color:var(--text2);cursor:pointer;padding:7px 12px;border-radius:7px;font-size:.85rem;font-weight:600;transition:.12s;white-space:nowrap;}
+.nb:hover{background:var(--s2);color:var(--text);}
+.nb.active{background:var(--accent);color:#fff;}
+.nb-sync{margin-left:6px;}
+
+/* BOTTOM NAV — mobile only */
+.bottom-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--s1);border-top:1px solid var(--border);z-index:50;height:60px;align-items:stretch;}
+.bnb{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;background:none;border:none;color:var(--text2);cursor:pointer;font-size:.65rem;font-weight:600;gap:3px;padding:6px 0;transition:.12s;}
+.bnb .ico{font-size:1.3rem;line-height:1;}
+.bnb.active{color:var(--accent);}
+
+/* LAYOUT */
+main{max-width:640px;margin:0 auto;padding:20px 14px calc(20px + var(--bottom-nav-h));}
+.section{display:none;}
+.section.active{display:block;}
+h2{font-size:1.3rem;font-weight:700;margin-bottom:16px;}
+h3{font-size:1rem;font-weight:700;margin-bottom:10px;}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:5px;padding:10px 16px;border-radius:8px;border:none;cursor:pointer;font-size:.875rem;font-weight:600;transition:.12s;}
+.btn-primary{background:var(--accent);color:#fff;}
+.btn-primary:hover{filter:brightness(1.12);}
+.btn-secondary{background:var(--accent2);color:#fff;}
+.btn-ghost{background:var(--s2);color:var(--text);border:1px solid var(--border);}
+.btn-ghost:hover{background:var(--s3);}
+.btn-danger{background:transparent;border:1px solid #c0392b;color:#e74c3c;}
+.btn-danger:hover{background:#c0392b;color:#fff;}
+.btn-sm{padding:6px 12px;font-size:.8rem;}
+.btn-xs{padding:3px 8px;font-size:.75rem;border-radius:5px;}
+.btn-block{width:100%;padding:13px;}
+
+/* CARDS */
+.card{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-bottom:14px;}
+.card-sm{background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:12px;}
+
+/* FORMS */
+input,select,textarea{background:var(--s2);border:1px solid var(--border);color:var(--text);padding:10px 13px;border-radius:8px;font-size:.95rem;width:100%;outline:none;transition:border .12s;font-family:var(--font);}
+input:focus,select:focus,textarea:focus{border-color:var(--accent);}
+select option{background:var(--s2);}
+label{display:block;font-size:.8rem;color:var(--text2);margin-bottom:5px;font-weight:600;letter-spacing:.02em;}
+.fg{margin-bottom:14px;}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;}
+
+/* BADGES */
+.badge{display:inline-block;padding:2px 9px;border-radius:99px;font-size:.72rem;font-weight:700;white-space:nowrap;}
+.b-cf{background:#2d1a0e;color:#e05c2a;}
+.b-oly{background:#0e1f3a;color:#5b8cf7;}
+.b-power{background:#1a0e2d;color:#a78bfa;}
+.b-gym{background:#0e2a1a;color:#3ecf74;}
+.b-cardio{background:#1a1a0e;color:#eab308;}
+.b-db{background:#1a1020;color:#ec4899;}
+.b-custom{background:#1a1a1a;color:#888;}
+
+/* MODAL */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);display:flex;align-items:flex-end;justify-content:center;z-index:100;padding:0;}
+.modal{background:var(--s1);border:1px solid var(--border);border-radius:var(--r) var(--r) 0 0;padding:22px;width:100%;max-width:600px;max-height:92vh;overflow-y:auto;}
+.mhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;}
+.mclose{background:none;border:none;color:var(--text2);cursor:pointer;font-size:1.2rem;padding:4px 8px;}
+.hidden{display:none!important;}
+
+/* MOVEMENT LOG BLOCK */
+.mv-block{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:14px;margin-bottom:12px;}
+.mv-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;gap:8px;}
+.mv-title{font-weight:700;font-size:.95rem;}
+.mv-actions{display:flex;gap:6px;flex-shrink:0;}
+.set-table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 -4px;}
+.set-table{width:100%;border-collapse:collapse;font-size:.82rem;}
+.set-table th{color:var(--text2);text-align:left;padding:4px 5px;font-weight:600;font-size:.72rem;border-bottom:1px solid var(--border);white-space:nowrap;}
+.set-table td{padding:5px 5px;vertical-align:middle;}
+.set-table tr:not(:last-child) td{border-bottom:1px solid var(--border);}
+.set-table input{padding:6px 7px;font-size:.82rem;min-width:54px;}
+.set-table select{padding:6px 7px;font-size:.82rem;min-width:54px;}
+.set-num{color:var(--text2);font-weight:700;width:22px;}
+.done-btn{width:30px;height:30px;border-radius:50%;border:2px solid var(--border);background:none;cursor:pointer;color:var(--text2);font-size:.85rem;display:flex;align-items:center;justify-content:center;transition:.12s;flex-shrink:0;}
+.done-btn.done{background:var(--green);border-color:var(--green);color:#000;}
+
+/* SEARCH */
+.search-wrap{display:flex;gap:8px;margin-bottom:14px;}
+.search-wrap input{flex:1;}
+
+/* MOVEMENT CARD */
+.mv-card{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:13px;cursor:pointer;transition:.12s;}
+.mv-card:hover,.mv-card:active{border-color:var(--accent);}
+.mv-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;}
+
+/* HISTORY */
+.wod-entry{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:14px;margin-bottom:10px;cursor:pointer;transition:.12s;}
+.wod-entry:active{border-color:var(--accent2);}
+.wod-meta{font-size:.78rem;color:var(--text2);margin-top:4px;}
+.mv-history-row{padding:10px 0;border-bottom:1px solid var(--border);}
+.mv-history-row:last-child{border-bottom:none;}
+
+/* TAGS */
+.tag-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;}
+
+/* TOAST */
+.toast{position:fixed;bottom:calc(70px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);background:var(--s2);border:1px solid var(--border);border-radius:9px;padding:10px 18px;font-size:.875rem;z-index:300;animation:ti .18s ease;white-space:nowrap;}
+@keyframes ti{from{transform:translateX(-50%) translateY(10px);opacity:0;}to{transform:translateX(-50%) translateY(0);opacity:1;}}
+
+/* NOTES */
+.notes-pill{font-size:.78rem;color:var(--text2);background:var(--s3);border-radius:6px;padding:4px 10px;margin-top:8px;line-height:1.5;}
+
+/* EMPTY */
+.empty{text-align:center;padding:36px;color:var(--text2);}
+.empty .icon{font-size:2.2rem;margin-bottom:10px;}
+
+/* TABS */
+.tabs{display:flex;gap:4px;margin-bottom:18px;border-bottom:1px solid var(--border);}
+.tab{background:none;border:none;color:var(--text2);cursor:pointer;padding:9px 14px;font-size:.85rem;font-weight:600;border-bottom:2px solid transparent;margin-bottom:-1px;transition:.12s;}
+.tab.active{color:var(--accent);border-bottom-color:var(--accent);}
+
+/* EFFORT */
+.effort-row{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;}
+.effort-btn{background:var(--s2);border:1px solid var(--border);color:var(--text2);border-radius:6px;padding:8px 4px;font-size:.72rem;cursor:pointer;transition:.12s;text-align:center;line-height:1.3;}
+.effort-btn.sel{background:var(--accent);border-color:var(--accent);color:#fff;}
+
+/* SECTION HEADER */
+.sec-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;}
+
+/* DETAILS/SUMMARY (more options) */
+details.more-opts{margin-bottom:14px;}
+details.more-opts summary{color:var(--text2);font-size:.82rem;cursor:pointer;padding:8px 0;list-style:none;display:flex;align-items:center;gap:6px;}
+details.more-opts summary::before{content:'▶';font-size:.65rem;transition:.15s;}
+details.more-opts[open] summary::before{content:'▼';}
+details.more-opts .more-body{padding-top:10px;}
+
+/* SYNC */
+.sync-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:4px;}
+.sync-ok{background:var(--green);}
+.sync-busy{background:#eab308;animation:pulse .8s infinite alternate;}
+.sync-err{background:#e74c3c;}
+.sync-off{background:var(--text2);}
+@keyframes pulse{from{opacity:.4}to{opacity:1}}
+
+/* CALENDAR */
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;}
+.cal-dow{text-align:center;font-size:.7rem;color:var(--text2);font-weight:700;padding:4px 0;}
+.cal-day{min-height:46px;border-radius:8px;border:1px solid var(--border);display:flex;flex-direction:column;align-items:center;padding:6px 4px;cursor:pointer;transition:.12s;position:relative;}
+.cal-day:hover{border-color:var(--accent);}
+.cal-day.empty{border-color:transparent;cursor:default;background:none;}
+.cal-day.today{border-color:var(--accent2);}
+.cal-day.selected{background:var(--accent);border-color:var(--accent);}
+.cal-day.selected .cal-dn{color:#fff;}
+.cal-day.has-wod{background:rgba(224,92,42,.1);}
+.cal-dn{font-size:.85rem;font-weight:700;line-height:1;}
+.cal-dots{display:flex;gap:2px;flex-wrap:wrap;justify-content:center;margin-top:3px;}
+.cal-dot{width:5px;height:5px;border-radius:50%;background:var(--accent);}
+.cal-day.selected .cal-dot{background:#fff;}
+
+/* STAT CARD */
+.stat-card{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:14px;text-align:center;}
+.stat-value{font-size:1.6rem;font-weight:800;color:var(--accent);}
+.stat-label{font-size:.75rem;color:var(--text2);margin-top:3px;}
+
+/* MOBILE */
+@media(max-width:600px){
+  :root{--bottom-nav-h:60px;}
+  .bottom-nav{display:flex;}
+  nav .nb:not(.nb-sync){display:none;}
+  nav{padding:0 12px;}
+  main{padding:14px 12px calc(14px + var(--bottom-nav-h));}
+  .row2,.row3{grid-template-columns:1fr;}
+  .modal{border-radius:16px 16px 0 0;max-height:88vh;}
+  .effort-row{grid-template-columns:repeat(5,1fr);}
+  .mv-grid{grid-template-columns:1fr;}
+  h2{font-size:1.2rem;}
+}
+</style>
+<!-- Firebase 9 compat SDKs -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+</head>
+<body>
+
+<nav>
+  <span class="logo">⚡ Bobwod</span>
+  <button class="nb active" data-sec="log" onclick="nav(this,'log')">Log</button>
+  <button class="nb" data-sec="history" onclick="nav(this,'history')">History</button>
+  <button class="nb" data-sec="movements" onclick="nav(this,'movements')">Movements</button>
+  <button class="nb" data-sec="body" onclick="nav(this,'body')">Body</button>
+  <button class="nb nb-sync" id="sync-btn" onclick="openModal('m-sync')" style="display:flex;align-items:center;gap:4px;">
+    <span class="sync-dot sync-off" id="sync-dot"></span><span id="sync-label">Sync</span>
+  </button>
+</nav>
+
+<main>
+
+<!-- ═══════════════════════════════════════════════════════════ LOG WORKOUT -->
+<div id="log" class="section active">
+  <div class="sec-head">
+    <h2>Log Workout</h2>
+    <button class="btn btn-ghost btn-sm" onclick="openModal('m-timer')">⏱ Timer</button>
+  </div>
+
+  <!-- Date -->
+  <div class="fg">
+    <label>Date</label>
+    <input type="date" id="wod-date">
+  </div>
+
+  <!-- Name -->
+  <div class="fg">
+    <label>Workout Name <span style="font-weight:400;opacity:.5;">(optional)</span></label>
+    <input type="text" id="wod-name" placeholder="Fran, Back Squat + Metcon, Open 24.1…">
+  </div>
+
+  <!-- Type -->
+  <div class="fg">
+    <label>Workout Type</label>
+    <select id="wod-type">
+      <option value="Strength">Strength</option>
+      <option value="WOD">WOD</option>
+      <option value="AMRAP">AMRAP</option>
+      <option value="For Time">For Time</option>
+      <option value="EMOM">EMOM</option>
+      <option value="Tabata">Tabata</option>
+      <option value="RFT">Rounds For Time</option>
+      <option value="Open">Open Workout</option>
+      <option value="Other">Other</option>
+    </select>
+  </div>
+
+  <!-- Inline Metcon Builder -->
+  <div class="card" style="margin-bottom:14px;">
+    <label style="margin-bottom:8px;">Workout / Metcon</label>
+    <textarea id="wod-metcon" rows="6" placeholder="Type your workout here and tap Detect Movements…
+
+Examples:
+Fran: 21-15-9 Thrusters 95# Kipping Pull-ups
+AMRAP 20: 5 Bar Muscle-Ups, 10 HSPU, 15 C2B
+3 RFT: 400m Run, 21 KB Swings 53#, 12 Pull-ups
+5x5 Back Squat @ 225#" style="margin-bottom:10px;"></textarea>
+    <div style="display:flex;gap:8px;">
+      <button class="btn btn-primary" style="flex:1;" onclick="detectMovementsInline()">🔍 Detect Movements</button>
+      <button class="btn btn-ghost" onclick="openPickMovement()">+ Add Manually</button>
+    </div>
+  </div>
+
+  <!-- Score -->
+  <div class="row2">
+    <div class="fg">
+      <label>Score Type</label>
+      <select id="score-type">
+        <option value="">— none —</option>
+        <option value="Time">Time</option>
+        <option value="Rounds + Reps">Rounds + Reps</option>
+        <option value="Reps">Reps</option>
+        <option value="Weight">Weight</option>
+        <option value="Distance">Distance</option>
+        <option value="Calories">Calories</option>
+        <option value="Points">Points</option>
+        <option value="% Bodyweight">% Bodyweight</option>
+        <option value="Pass/Fail">Pass/Fail</option>
+      </select>
+    </div>
+    <div class="fg">
+      <label>Score</label>
+      <input type="text" id="score-value" placeholder="e.g. 8:42, 12+5, 225#">
+    </div>
+  </div>
+
+  <!-- Movement blocks -->
+  <div id="mv-blocks"></div>
+  <div id="log-empty" class="empty" style="padding:20px 0;"><div class="icon">🏋️</div><div>Type your workout above and tap Detect Movements,<br>or add movements manually.</div></div>
+
+  <!-- More details (collapsible) -->
+  <details class="more-opts">
+    <summary>More details</summary>
+    <div class="more-body">
+      <div class="row2">
+        <div class="fg">
+          <label>Time of Day</label>
+          <select id="wod-tod">
+            <option value="">— optional —</option>
+            <option value="Early Morning (5–7am)">Early Morning (5–7am)</option>
+            <option value="Morning (7–10am)">Morning (7–10am)</option>
+            <option value="Midday (10am–1pm)">Midday (10am–1pm)</option>
+            <option value="Afternoon (1–5pm)">Afternoon (1–5pm)</option>
+            <option value="Evening (5–8pm)">Evening (5–8pm)</option>
+            <option value="Night (8pm+)">Night (8pm+)</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label>Duration</label>
+          <input type="text" id="wod-duration" placeholder="e.g. 45 min, 1:12:00">
+        </div>
+      </div>
+      <div class="fg">
+        <label>Effort / Intensity</label>
+        <div class="effort-row" id="effort-row">
+          <button class="effort-btn" data-e="1 – Very Light" onclick="setEffort(this)">1<br><span style="opacity:.7">Very Light</span></button>
+          <button class="effort-btn" data-e="2 – Light" onclick="setEffort(this)">2<br><span style="opacity:.7">Light</span></button>
+          <button class="effort-btn" data-e="3 – Moderate" onclick="setEffort(this)">3<br><span style="opacity:.7">Moderate</span></button>
+          <button class="effort-btn" data-e="4 – Hard" onclick="setEffort(this)">4<br><span style="opacity:.7">Hard</span></button>
+          <button class="effort-btn" data-e="5 – Max Effort" onclick="setEffort(this)">5<br><span style="opacity:.7">Max</span></button>
+        </div>
+      </div>
+      <div class="fg">
+        <label>Notes</label>
+        <textarea id="wod-notes" rows="2" placeholder="RX / scaled, how you felt, coaching notes…"></textarea>
+      </div>
+    </div>
+  </details>
+
+  <button class="btn btn-primary btn-block" onclick="saveWorkout()">✅ Save Workout</button>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ HISTORY -->
+<div id="history" class="section">
+  <div class="sec-head"><h2>Workout History</h2></div>
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab(this,'tab-workouts')">All Workouts</button>
+    <button class="tab" onclick="switchTab(this,'tab-calendar')">Calendar</button>
+    <button class="tab" onclick="switchTab(this,'tab-movement')">By Movement</button>
+  </div>
+
+  <div id="tab-workouts">
+    <div id="history-list"></div>
+    <div id="history-empty" class="empty"><div class="icon">📋</div><div>No workouts logged yet.</div></div>
+  </div>
+
+  <div id="tab-calendar" class="hidden">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+      <button class="btn btn-ghost btn-sm" onclick="calNav(-1)">◀</button>
+      <strong id="cal-label" style="font-size:1rem;"></strong>
+      <button class="btn btn-ghost btn-sm" onclick="calNav(1)">▶</button>
+    </div>
+    <div class="cal-grid" id="cal-grid"></div>
+    <div id="cal-day-workouts" style="margin-top:16px;"></div>
+  </div>
+
+  <div id="tab-movement" class="hidden">
+    <div class="search-wrap" style="margin-bottom:12px;">
+      <input type="text" id="mv-search-hist" placeholder="Search movements…" oninput="renderMvHistory()">
+    </div>
+    <div id="mv-history-picks" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;"></div>
+    <div id="mv-history-detail"></div>
+    <div id="mv-history-empty" class="empty"><div class="icon">🔍</div><div>Search or pick a movement to see its history across all workouts.</div></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ MOVEMENTS -->
+<div id="movements" class="section">
+  <div class="sec-head">
+    <h2>Movement Library</h2>
+    <button class="btn btn-primary" onclick="openModal('m-custom')">+ Add Custom</button>
+  </div>
+  <div class="search-wrap">
+    <input type="text" id="lib-search" placeholder="Search movements…" oninput="renderLibrary()">
+    <select id="lib-cat" onchange="renderLibrary()" style="width:180px;">
+      <option value="">All Categories</option>
+      <option value="CrossFit / MetCon">CrossFit / MetCon</option>
+      <option value="Olympic Lifting">Olympic Lifting</option>
+      <option value="Powerlifting / Strength">Powerlifting / Strength</option>
+      <option value="Gymnastics">Gymnastics</option>
+      <option value="Cardio / Monostructural">Cardio / Monostructural</option>
+      <option value="Dumbbell / Kettlebell">Dumbbell / Kettlebell</option>
+      <option value="Custom">Custom</option>
+    </select>
+  </div>
+  <div class="mv-grid" id="lib-grid"></div>
+  <div id="lib-empty" class="empty hidden"><div class="icon">🔍</div><div>No movements found.</div></div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ BODY -->
+<div id="body" class="section">
+  <div class="sec-head">
+    <h2>Body Weight</h2>
+    <div style="display:flex;gap:8px;">
+      <button class="btn btn-ghost btn-sm" onclick="document.getElementById('bw-import-file').click()">⬆ Import CSV</button>
+      <input type="file" id="bw-import-file" accept=".csv" style="display:none;" onchange="importBWcsv(this)">
+    </div>
+  </div>
+
+  <!-- Log today -->
+  <div class="card" style="margin-bottom:16px;">
+    <div style="display:flex;gap:8px;align-items:flex-end;">
+      <div class="fg" style="flex:1;margin-bottom:0;">
+        <label>Log Weight</label>
+        <input type="number" id="bw-weight" placeholder="e.g. 195.4" step="0.1" min="50">
+      </div>
+      <div class="fg" style="width:80px;margin-bottom:0;">
+        <label>Unit</label>
+        <select id="bw-unit">
+          <option value="lbs">lbs</option>
+          <option value="kg">kg</option>
+        </select>
+      </div>
+      <div class="fg" style="flex:1;margin-bottom:0;">
+        <label>Date</label>
+        <input type="date" id="bw-date">
+      </div>
+      <button class="btn btn-primary" onclick="logWeight()" style="flex-shrink:0;margin-bottom:0;">Save</button>
+    </div>
+    <div class="fg" style="margin-top:10px;margin-bottom:0;">
+      <input type="text" id="bw-note" placeholder="Note (optional) — fasted, morning, post-workout…">
+    </div>
+  </div>
+
+  <!-- Stats row -->
+  <div id="bw-stats" style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px;"></div>
+
+  <!-- Range picker -->
+  <div style="display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap;">
+    <button class="effort-btn"     id="bwr-7"   onclick="setBWRange(7,this)">7d</button>
+    <button class="effort-btn"     id="bwr-14"  onclick="setBWRange(14,this)">14d</button>
+    <button class="effort-btn"     id="bwr-30"  onclick="setBWRange(30,this)">1mo</button>
+    <button class="effort-btn sel" id="bwr-90"  onclick="setBWRange(90,this)">90d</button>
+    <button class="effort-btn"     id="bwr-180" onclick="setBWRange(180,this)">6mo</button>
+    <button class="effort-btn"     id="bwr-365" onclick="setBWRange(365,this)">1yr</button>
+    <button class="effort-btn"     id="bwr-all" onclick="setBWRange(0,this)">All</button>
+  </div>
+
+  <!-- Chart -->
+  <div class="card" style="padding:12px;margin-bottom:16px;overflow-x:auto;">
+    <div id="bw-chart"></div>
+  </div>
+
+  <!-- History list -->
+  <div class="card" style="padding:0;">
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 16px 10px;">
+      <strong style="font-size:.9rem;">History</strong>
+      <span id="bw-entry-count" style="font-size:.8rem;color:var(--text2);"></span>
+    </div>
+    <div id="bw-history" style="max-height:320px;overflow-y:auto;"></div>
+  </div>
+</div>
+
+</main>
+
+<!-- Bottom nav (mobile) -->
+<div class="bottom-nav">
+  <button class="bnb active" data-sec="log" onclick="navMobile(this,'log')"><span class="ico">📝</span>Log</button>
+  <button class="bnb" data-sec="history" onclick="navMobile(this,'history')"><span class="ico">📋</span>History</button>
+  <button class="bnb" data-sec="movements" onclick="navMobile(this,'movements')"><span class="ico">🏋️</span>Movements</button>
+  <button class="bnb" data-sec="body" onclick="navMobile(this,'body')"><span class="ico">⚖️</span>Body</button>
+  <button class="bnb" onclick="openModal('m-sync')"><span class="ico">☁️</span>Sync</button>
+</div>
+
+<!-- ══════════════════════════════════════════ MODALS -->
+
+<!-- Pick Movement -->
+<div id="m-pick" class="overlay hidden" style="z-index:150;">
+  <div class="modal">
+    <div class="mhead"><h3>Add Movement to Workout</h3><button class="mclose" onclick="closeModal('m-pick')">✕</button></div>
+    <div class="search-wrap"><input type="text" id="pick-search" placeholder="Search movements…" oninput="renderPickList()"></div>
+    <select id="pick-cat" onchange="renderPickList()" style="margin-bottom:12px;">
+      <option value="">All Categories</option>
+      <option value="CrossFit / MetCon">CrossFit / MetCon</option>
+      <option value="Olympic Lifting">Olympic Lifting</option>
+      <option value="Powerlifting / Strength">Powerlifting / Strength</option>
+      <option value="Gymnastics">Gymnastics</option>
+      <option value="Cardio / Monostructural">Cardio / Monostructural</option>
+      <option value="Dumbbell / Kettlebell">Dumbbell / Kettlebell</option>
+      <option value="Custom">Custom</option>
+    </select>
+    <div id="pick-list" style="max-height:360px;overflow-y:auto;display:flex;flex-direction:column;gap:7px;"></div>
+    <div style="border-top:1px solid var(--border);margin-top:12px;padding-top:12px;">
+      <button class="btn btn-ghost" style="width:100%;" onclick="openCreateFromPicker()">+ Create New Movement</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Set Modal (for a specific movement in the workout) -->
+<div id="m-set" class="overlay hidden">
+  <div class="modal">
+    <div class="mhead"><h3 id="m-set-title">Log Set</h3><button class="mclose" onclick="closeModal('m-set')">✕</button></div>
+    <div id="m-set-body"></div>
+    <div style="display:flex;gap:8px;margin-top:14px;">
+      <button class="btn btn-primary" style="flex:1;" onclick="confirmAddSet()">Add Set</button>
+      <button class="btn btn-ghost" onclick="closeModal('m-set')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- Movement Detail (Library) -->
+<div id="m-detail" class="overlay hidden">
+  <div class="modal">
+    <div class="mhead"><h3 id="det-name"></h3><button class="mclose" onclick="closeModal('m-detail')">✕</button></div>
+    <div id="det-body"></div>
+    <button class="btn btn-primary" style="width:100%;margin-top:16px;" onclick="addFromDetail()">+ Add to Current Workout</button>
+  </div>
+</div>
+
+<!-- Custom Movement -->
+<div id="m-custom" class="overlay hidden" style="z-index:200;">
+  <div class="modal">
+    <div class="mhead"><h3 id="custom-title">Add Custom Movement</h3><button class="mclose" onclick="closeModal('m-custom')">✕</button></div>
+    <div class="fg"><label>Movement Name</label><input type="text" id="c-name" placeholder="e.g. L-Sit Hold, Devil Press…"></div>
+    <div class="fg"><label>Category</label>
+      <select id="c-cat">
+        <option value="Custom">Custom</option>
+        <option value="CrossFit / MetCon">CrossFit / MetCon</option>
+        <option value="Olympic Lifting">Olympic Lifting</option>
+        <option value="Powerlifting / Strength">Powerlifting / Strength</option>
+        <option value="Gymnastics">Gymnastics</option>
+        <option value="Cardio / Monostructural">Cardio / Monostructural</option>
+        <option value="Dumbbell / Kettlebell">Dumbbell / Kettlebell</option>
+      </select>
+    </div>
+    <div class="fg"><label>Tracking Fields (check all that apply)</label>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:4px;" id="c-fields">
+        <label style="color:var(--text);font-size:.85rem;margin:0;"><input type="checkbox" value="weight" style="width:auto;margin-right:4px;"> Weight</label>
+        <label style="color:var(--text);font-size:.85rem;margin:0;"><input type="checkbox" value="reps" style="width:auto;margin-right:4px;" checked> Reps</label>
+        <label style="color:var(--text);font-size:.85rem;margin:0;"><input type="checkbox" value="time" style="width:auto;margin-right:4px;"> Time</label>
+        <label style="color:var(--text);font-size:.85rem;margin:0;"><input type="checkbox" value="distance" style="width:auto;margin-right:4px;"> Distance</label>
+        <label style="color:var(--text);font-size:.85rem;margin:0;"><input type="checkbox" value="calories" style="width:auto;margin-right:4px;"> Calories</label>
+        <label style="color:var(--text);font-size:.85rem;margin:0;"><input type="checkbox" value="modifier" style="width:auto;margin-right:4px;"> Style/Modifier</label>
+      </div>
+    </div>
+    <div class="fg" id="c-mod-wrap" style="display:none;">
+      <label>Modifier Options (comma-separated)</label>
+      <input type="text" id="c-mods" placeholder="e.g. Kipping, Strict, Butterfly, Weighted">
+    </div>
+    <div class="fg">
+      <label>Aliases <span style="font-weight:400;opacity:.5;">(comma-separated — used by Detect Movements)</span></label>
+      <input type="text" id="c-aliases" placeholder="e.g. GHR, Nordic Curl, Glute Ham">
+    </div>
+    <div class="fg"><label>Notes / Description (optional)</label><textarea id="c-notes" rows="2" placeholder="What makes this movement distinct…"></textarea></div>
+    <button class="btn btn-primary" style="width:100%;" onclick="saveCustomMovement()">Save Movement</button>
+  </div>
+</div>
+
+<!-- Workout Detail (History) -->
+<div id="m-wod-detail" class="overlay hidden">
+  <div class="modal" style="max-width:600px;">
+    <div class="mhead"><h3 id="wd-title"></h3><button class="mclose" onclick="closeModal('m-wod-detail')">✕</button></div>
+    <div id="wd-body"></div>
+    <div style="display:flex;gap:8px;margin-top:16px;">
+      <button class="btn btn-ghost btn-sm" onclick="openEditWorkout()">✏ Edit Workout</button>
+      <button class="btn btn-danger btn-sm" onclick="deleteWorkout()">Delete</button>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Workout -->
+<div id="m-edit-wod" class="overlay hidden">
+  <div class="modal" style="max-width:660px;">
+    <div class="mhead"><h3>✏ Edit Workout</h3><button class="mclose" onclick="closeModal('m-edit-wod')">✕</button></div>
+    <div id="edit-wod-body"></div>
+    <div style="display:flex;gap:8px;margin-top:16px;">
+      <button class="btn btn-primary" style="flex:1;" onclick="saveEditWorkout()">Save Changes</button>
+      <button class="btn btn-ghost" onclick="closeModal('m-edit-wod')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- Metcon Builder -->
+<div id="m-metcon" class="overlay hidden">
+  <div class="modal" style="max-width:640px;">
+    <div class="mhead">
+      <h3>📋 Metcon Builder</h3>
+      <button class="mclose" onclick="closeModal('m-metcon')">✕</button>
+    </div>
+    <p style="font-size:.82rem;color:var(--text2);margin-bottom:12px;">
+      Type or paste your workout. The app will recognize movements, reps, and weights automatically.<br>
+      <em>e.g. "21-15-9 Thrusters 95# Pull-ups" or "5 rounds: 10 DB Snatches 50#, 15 Box Jumps, 400m Run"</em>
+    </p>
+    <div class="fg">
+      <textarea id="metcon-input" rows="8" placeholder="Type your WOD here…
+Examples:
+Fran: 21-15-9 Thrusters 95# Kipping Pull-ups
+AMRAP 20: 5 Bar Muscle-Ups, 10 HSPU, 15 C2B, 20 T2B
+3 RFT: 400m Run, 21 KB Swings 53#, 12 Pull-ups
+DT: 12 DL 155#, 9 Hang Power Cleans 155#, 6 Push Jerks 155#
+5x5 Back Squat @ 225#" oninput="parseMetcon()"></textarea>
+    </div>
+    <div id="metcon-results" style="margin-bottom:10px;"></div>
+    <div style="display:flex;gap:8px;margin-bottom:10px;">
+      <button class="btn btn-ghost btn-sm" onclick="openMetconManualPick()">+ Add Movement Manually</button>
+    </div>
+    <div style="display:flex;gap:8px;">
+      <button class="btn btn-primary" style="flex:1;" id="metcon-add-btn" onclick="addMetconMovements()" disabled>Add Movements to Workout</button>
+      <button class="btn btn-ghost" onclick="closeModal('m-metcon')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- Rest Timer -->
+<div id="m-timer" class="overlay hidden">
+  <div class="modal" style="text-align:center;max-width:340px;">
+    <div class="mhead" style="justify-content:center;"><h3>Rest Timer</h3><button class="mclose" style="position:absolute;right:22px;" onclick="closeModal('m-timer')">✕</button></div>
+    <div id="timer-disp" style="font-size:3rem;font-weight:800;color:var(--accent);padding:16px 0;">90s</div>
+    <div style="display:flex;justify-content:center;gap:6px;flex-wrap:wrap;margin-bottom:16px;">
+      <button class="btn btn-ghost btn-sm" onclick="setTimer(30)">30s</button>
+      <button class="btn btn-ghost btn-sm" onclick="setTimer(60)">60s</button>
+      <button class="btn btn-ghost btn-sm" onclick="setTimer(90)">90s</button>
+      <button class="btn btn-ghost btn-sm" onclick="setTimer(120)">2m</button>
+      <button class="btn btn-ghost btn-sm" onclick="setTimer(180)">3m</button>
+      <button class="btn btn-ghost btn-sm" onclick="setTimer(300)">5m</button>
+    </div>
+    <div style="display:flex;justify-content:center;gap:10px;">
+      <button class="btn btn-primary" id="timer-btn" onclick="toggleTimer()">▶ Start</button>
+      <button class="btn btn-ghost" onclick="resetTimer()">↺ Reset</button>
+    </div>
+  </div>
+</div>
+
+<!-- Cloud Sync Modal -->
+<div id="m-sync" class="overlay hidden" style="z-index:160;">
+  <div class="modal" style="max-width:520px;">
+    <div class="mhead"><h3>☁️ Cloud Sync</h3><button class="mclose" onclick="closeModal('m-sync')">✕</button></div>
+
+    <!-- Not configured -->
+    <div id="sync-setup" class="hidden">
+      <p style="font-size:.875rem;color:var(--text2);margin-bottom:16px;line-height:1.6;">
+        Paste your Firebase config to enable cross-device sync. Your data is stored privately under your Google account.
+      </p>
+      <div class="fg">
+        <label>Firebase Config (JSON)</label>
+        <textarea id="fb-config-input" rows="8" placeholder='{
+  "apiKey": "...",
+  "authDomain": "...",
+  "projectId": "...",
+  "storageBucket": "...",
+  "messagingSenderId": "...",
+  "appId": "..."
+}'></textarea>
+      </div>
+      <button class="btn btn-primary" style="width:100%;margin-bottom:10px;" onclick="initFirebase()">Connect Firebase</button>
+      <details style="font-size:.8rem;color:var(--text2);">
+        <summary style="cursor:pointer;margin-bottom:8px;">How to get your Firebase config →</summary>
+        <ol style="padding-left:18px;line-height:2;">
+          <li>Go to <a href="https://console.firebase.google.com" target="_blank">console.firebase.google.com</a></li>
+          <li>Click <strong>Add project</strong> → name it "Bobwod" → create</li>
+          <li>Click <strong>&lt;/&gt; Web</strong> to add a web app → name it "Bobwod" → Register</li>
+          <li>Copy the <code>firebaseConfig</code> object and paste it above</li>
+          <li>In the left sidebar → <strong>Build → Firestore Database</strong> → Create database → Start in test mode</li>
+          <li>In the left sidebar → <strong>Build → Authentication</strong> → Get started → Google → Enable → Save</li>
+        </ol>
+      </details>
+    </div>
+
+    <!-- Configured, not signed in -->
+    <div id="sync-signin" class="hidden" style="text-align:center;padding:16px 0;">
+      <div style="font-size:2rem;margin-bottom:12px;">🔑</div>
+      <p style="color:var(--text2);margin-bottom:16px;">Sign in with Google to sync your workouts across devices.</p>
+      <button class="btn btn-primary" style="width:100%;" onclick="signInGoogle()">Sign in with Google</button>
+      <button class="btn btn-ghost btn-sm" style="margin-top:10px;width:100%;" onclick="clearFirebaseConfig()">Remove Firebase Config</button>
+    </div>
+
+    <!-- Signed in -->
+    <div id="sync-signedIn" class="hidden">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+        <img id="sync-avatar" src="" style="width:40px;height:40px;border-radius:50%;display:none;">
+        <div>
+          <div id="sync-user-name" style="font-weight:700;"></div>
+          <div id="sync-user-email" style="font-size:.8rem;color:var(--text2);"></div>
+        </div>
+        <span class="sync-dot sync-ok" style="width:10px;height:10px;margin-left:auto;"></span>
+      </div>
+      <div id="sync-status-msg" class="notes-pill" style="margin-bottom:14px;"></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="btn btn-ghost btn-sm" onclick="forcePullFromCloud()">⬇ Pull from Cloud</button>
+        <button class="btn btn-ghost btn-sm" onclick="forcePushToCloud()">⬆ Push to Cloud</button>
+        <button class="btn btn-danger btn-sm" style="margin-left:auto;" onclick="signOutUser()">Sign Out</button>
+      </div>
+    </div>
+
+    <!-- Export / Import (always visible) -->
+    <div style="border-top:1px solid var(--border);margin-top:16px;padding-top:16px;">
+      <div style="font-size:.75rem;color:var(--text2);font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px;">Export / Import</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="btn btn-ghost btn-sm" onclick="exportData()">⬇ Export JSON</button>
+        <button class="btn btn-ghost btn-sm" onclick="document.getElementById('import-file').click()">⬆ Import JSON</button>
+        <input type="file" id="import-file" accept=".json" style="display:none;" onchange="importData(this)">
+      </div>
+      <div style="font-size:.75rem;color:var(--text2);margin-top:8px;line-height:1.5;">
+        Export saves all your workouts and custom movements as a file. Import merges a file into the current data without overwriting existing entries.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════════════════════ DATA
+
+const MOVEMENT_DB = [
+  // ── CrossFit / MetCon ─────────────────────────────────────────────────────
+  {id:'burpee',name:'Burpee',cat:'CrossFit / MetCon',fields:['reps'],mods:[],note:'Full body conditioning. Squat, jump back, push-up, jump up, clap overhead.'},
+  {id:'burpee-box',name:'Burpee Box Jump-Over',cat:'CrossFit / MetCon',fields:['reps'],mods:[],note:'Burpee to the side of a box, jump over it.'},
+  {id:'wallball',name:'Wall Ball',cat:'CrossFit / MetCon',fields:['weight','reps'],mods:[],note:'Thruster to a target. Squat to full depth, throw med ball to target.'},
+  {id:'thruster',name:'Thruster',cat:'CrossFit / MetCon',fields:['weight','reps'],mods:['Barbell','Dumbbell','Kettlebell'],note:'Front squat directly into overhead press in one movement.'},
+  {id:'box-jump',name:'Box Jump',cat:'CrossFit / MetCon',fields:['reps','modifier'],mods:['Standard','Step Down','Rebound'],note:'Jump onto box, stand tall at top.'},
+  {id:'double-under',name:'Double-Under',cat:'CrossFit / MetCon',fields:['reps'],mods:[],note:'Jump rope passes under feet twice per jump.'},
+  {id:'single-under',name:'Single-Under',cat:'CrossFit / MetCon',fields:['reps'],mods:[],note:'Standard single-rotation jump rope.'},
+  {id:'kb-swing',name:'Kettlebell Swing',cat:'CrossFit / MetCon',fields:['weight','reps','modifier'],mods:['American (Overhead)','Russian (Hip Height)'],note:'Hip hinge driven swing. American = full overhead, Russian = eye/hip level.'},
+  {id:'kb-snatch',name:'Kettlebell Snatch',cat:'CrossFit / MetCon',fields:['weight','reps'],mods:[],note:'Single-arm KB swing through to lockout overhead.'},
+  {id:'kb-clean',name:'Kettlebell Clean',cat:'CrossFit / MetCon',fields:['weight','reps'],mods:['Single-Arm','Double'],note:'Swing kettlebell into rack position.'},
+  {id:'kb-press',name:'Kettlebell Press',cat:'CrossFit / MetCon',fields:['weight','reps'],mods:['Single-Arm','Double'],note:'Strict overhead press from rack position.'},
+  {id:'kb-goblet-squat',name:'Goblet Squat',cat:'CrossFit / MetCon',fields:['weight','reps'],mods:[],note:'Squat holding KB or DB at chest height.'},
+  {id:'situp',name:'Sit-Up',cat:'CrossFit / MetCon',fields:['reps','modifier'],mods:['AbMat','GHD','Anchored','Unanchored'],note:'Abdominal sit-up variation.'},
+  {id:'deadlift',name:'Deadlift',cat:'CrossFit / MetCon',fields:['weight','reps'],mods:['Conventional','Sumo','Romanian (RDL)','Stiff-Leg','Single-Leg'],note:'Hip hinge to lift bar from floor to standing.'},
+  {id:'sdlhp',name:'Sumo Deadlift High Pull (SDLHP)',cat:'CrossFit / MetCon',fields:['weight','reps'],mods:[],note:'Wide stance deadlift pulled to chin height.'},
+  {id:'step-up',name:'Step-Up',cat:'CrossFit / MetCon',fields:['weight','reps'],mods:[],note:'Step onto a box alternating legs.'},
+  {id:'lunge',name:'Lunge',cat:'CrossFit / MetCon',fields:['weight','reps','modifier'],mods:['Walking','Reverse','Overhead','Front Rack','Lateral','DB/KB'],note:'Unilateral leg drive movement.'},
+  {id:'pistol',name:'Pistol Squat',cat:'CrossFit / MetCon',fields:['reps','modifier'],mods:['Strict','Banded','Box-Assisted','Weighted'],note:'Single-leg squat to depth, opposite leg extended forward.'},
+  {id:'sandbag-carry',name:'Sandbag Carry',cat:'CrossFit / MetCon',fields:['weight','distance'],mods:[],note:'Carry a sandbag for distance.'},
+  {id:'farmers-carry',name:'Farmers Carry',cat:'CrossFit / MetCon',fields:['weight','distance'],mods:['Double','Single-Arm','Suitcase'],note:'Walk holding heavy implements at sides.'},
+
+  // ── Olympic Lifting ───────────────────────────────────────────────────────
+  {id:'clean',name:'Clean',cat:'Olympic Lifting',fields:['weight','reps','modifier'],mods:['Full (Squat) Clean','Power Clean','Hang Clean','Hang Power Clean','High Hang Clean','High Hang Power Clean','Tall Clean','Dumbbell Clean'],note:'Bar pulled from floor to front rack with hip drive.'},
+  {id:'jerk',name:'Jerk',cat:'Olympic Lifting',fields:['weight','reps','modifier'],mods:['Split Jerk','Push Jerk','Power Jerk','Push Press'],note:'Drive bar overhead from front rack. Choose style.'},
+  {id:'clean-jerk',name:'Clean & Jerk',cat:'Olympic Lifting',fields:['weight','reps','modifier'],mods:['Full Clean + Split Jerk','Power Clean + Push Jerk','Hang Power Clean + Push Jerk','Squat Clean + Split Jerk'],note:'Combined Olympic lift: clean then jerk.'},
+  {id:'snatch',name:'Snatch',cat:'Olympic Lifting',fields:['weight','reps','modifier'],mods:['Full (Squat) Snatch','Power Snatch','Hang Snatch','Hang Power Snatch','High Hang Power Snatch','Muscle Snatch','Snatch Balance','Drop Snatch','Dumbbell Snatch'],note:'Single pull from floor to overhead lockout.'},
+  {id:'overhead-squat',name:'Overhead Squat',cat:'Olympic Lifting',fields:['weight','reps'],mods:[],note:'Barbell held overhead in snatch-width grip while squatting to depth.'},
+  {id:'push-press',name:'Push Press',cat:'Olympic Lifting',fields:['weight','reps'],mods:['Barbell','Dumbbell','Kettlebell'],note:'Dip and drive with legs to initiate overhead press.'},
+  {id:'push-jerk',name:'Push Jerk',cat:'Olympic Lifting',fields:['weight','reps'],mods:[],note:'Dip, drive, drop under bar to catch in partial squat, then stand.'},
+  {id:'split-jerk',name:'Split Jerk',cat:'Olympic Lifting',fields:['weight','reps'],mods:[],note:'Dip, drive, catch bar overhead in split stance.'},
+  {id:'snatch-pull',name:'Snatch Pull',cat:'Olympic Lifting',fields:['weight','reps'],mods:[],note:'Pull portion of the snatch without catching overhead.'},
+  {id:'clean-pull',name:'Clean Pull',cat:'Olympic Lifting',fields:['weight','reps'],mods:[],note:'Pull portion of the clean without catching in rack.'},
+  {id:'hang-power-clean',name:'Hang Power Clean',cat:'Olympic Lifting',fields:['weight','reps'],mods:[],note:'Clean from hang position, caught above parallel.'},
+  {id:'power-clean',name:'Power Clean',cat:'Olympic Lifting',fields:['weight','reps'],mods:[],note:'Clean from floor, caught above parallel.'},
+  {id:'power-snatch',name:'Power Snatch',cat:'Olympic Lifting',fields:['weight','reps'],mods:[],note:'Snatch from floor, caught above parallel.'},
+  {id:'muscle-up-bar-oly',name:'Bar Muscle-Up',cat:'Olympic Lifting',fields:['reps','modifier'],mods:['Kipping','Strict','Weighted'],note:'Pull-up that transitions into a dip above the bar.'},
+
+  // ── Powerlifting / Strength ───────────────────────────────────────────────
+  {id:'back-squat',name:'Back Squat',cat:'Powerlifting / Strength',fields:['weight','reps','modifier'],mods:['High Bar','Low Bar','Box Squat','Pause Squat','Tempo'],note:'Bar on upper back (high bar) or lower back (low bar), squat to depth.'},
+  {id:'front-squat',name:'Front Squat',cat:'Powerlifting / Strength',fields:['weight','reps','modifier'],mods:['Standard','Pause','Tempo','Box'],note:'Bar in front rack position, squat to depth.'},
+  {id:'bench-press',name:'Bench Press',cat:'Powerlifting / Strength',fields:['weight','reps','modifier'],mods:['Flat','Incline','Decline','Close Grip','Pause','DB Flat','DB Incline'],note:'Press from chest to lockout lying on bench.'},
+  {id:'strict-press',name:'Strict Press (OHP)',cat:'Powerlifting / Strength',fields:['weight','reps'],mods:[],note:'Barbell pressed overhead from rack/shoulders with no leg drive.'},
+  {id:'rdl',name:'Romanian Deadlift (RDL)',cat:'Powerlifting / Strength',fields:['weight','reps'],mods:['Barbell','Dumbbell','Single-Leg'],note:'Hip hinge with slight knee bend, bar stays close to legs.'},
+  {id:'goodmorning',name:'Good Morning',cat:'Powerlifting / Strength',fields:['weight','reps'],mods:[],note:'Bar on back, hinge at hip until torso is parallel to floor.'},
+  {id:'hip-thrust',name:'Hip Thrust',cat:'Powerlifting / Strength',fields:['weight','reps'],mods:['Barbell','Banded','Single-Leg'],note:'Glute dominant bridge movement from a bench.'},
+  {id:'bent-row',name:'Bent-Over Row',cat:'Powerlifting / Strength',fields:['weight','reps','modifier'],mods:['Barbell','Dumbbell','Pendlay Row','T-Bar'],note:'Hinge at hips, pull bar to lower chest/stomach.'},
+  {id:'pendlay-row',name:'Pendlay Row',cat:'Powerlifting / Strength',fields:['weight','reps'],mods:[],note:'Bar reset on floor each rep; horizontal pull.'},
+  {id:'trap-bar-dl',name:'Trap Bar Deadlift',cat:'Powerlifting / Strength',fields:['weight','reps'],mods:[],note:'Deadlift inside a hex/trap bar; more quad-dominant.'},
+  {id:'deficit-dl',name:'Deficit Deadlift',cat:'Powerlifting / Strength',fields:['weight','reps'],mods:[],note:'Standing on plates to increase range of motion.'},
+  {id:'pause-squat',name:'Pause Squat',cat:'Powerlifting / Strength',fields:['weight','reps'],mods:['Back Squat','Front Squat'],note:'Hold at the bottom of the squat for time.'},
+  {id:'zercher-squat',name:'Zercher Squat',cat:'Powerlifting / Strength',fields:['weight','reps'],mods:[],note:'Bar held in the crook of the elbows.'},
+
+  // ── Gymnastics ────────────────────────────────────────────────────────────
+  {id:'pullup',name:'Pull-Up',cat:'Gymnastics',fields:['reps','modifier'],mods:['Strict','Kipping','Butterfly','Weighted','Banded','Chin-Up','Wide Grip','Narrow Grip'],note:'Hang from bar and pull chin over it.'},
+  {id:'chest-to-bar',name:'Chest-to-Bar Pull-Up',cat:'Gymnastics',fields:['reps','modifier'],mods:['Kipping','Strict','Butterfly','Weighted','Banded'],note:'Pull-up where chest touches the bar.'},
+  {id:'bar-muscle-up',name:'Bar Muscle-Up',cat:'Gymnastics',fields:['reps','modifier'],mods:['Kipping','Strict','Weighted'],note:'Pull-up transitioning to dip above the bar.'},
+  {id:'ring-muscle-up',name:'Ring Muscle-Up',cat:'Gymnastics',fields:['reps','modifier'],mods:['Kipping','Strict','Weighted','False Grip'],note:'Pull-up on rings transitioning to ring dip.'},
+  {id:'ring-dip',name:'Ring Dip',cat:'Gymnastics',fields:['reps','modifier'],mods:['Strict','Kipping','Banded','Weighted'],note:'Dip on gymnastic rings.'},
+  {id:'bar-dip',name:'Bar Dip',cat:'Gymnastics',fields:['reps','modifier'],mods:['Strict','Kipping','Weighted','Banded'],note:'Dip on parallel bars or box dip.'},
+  {id:'hspu',name:'Handstand Push-Up (HSPU)',cat:'Gymnastics',fields:['reps','modifier'],mods:['Strict','Kipping','Pike','DB'],note:'Inverted push-up. Heels on wall or freestanding.'},
+  {id:'handstand-walk',name:'Handstand Walk',cat:'Gymnastics',fields:['distance'],mods:[],note:'Walk on hands for distance.'},
+  {id:'wall-walk',name:'Wall Walk',cat:'Gymnastics',fields:['reps'],mods:[],note:'Push-up position to handstand against wall.'},
+  {id:'ttb',name:'Toes-to-Bar (T2B)',cat:'Gymnastics',fields:['reps','modifier'],mods:['Kipping','Strict','Single','Knees-to-Elbow (K2E)'],note:'Hanging from bar, bring toes to touch bar.'},
+  {id:'k2e',name:'Knees-to-Elbow (K2E)',cat:'Gymnastics',fields:['reps'],mods:[],note:'Hang from bar and bring knees to elbows.'},
+  {id:'rope-climb',name:'Rope Climb',cat:'Gymnastics',fields:['reps','modifier'],mods:['Legless','With Legs','L-Sit','15ft','20ft'],note:'Climb a hanging rope to the top.'},
+  {id:'pushup',name:'Push-Up',cat:'Gymnastics',fields:['reps','modifier'],mods:['Standard','Hand-Release (HRPU)','Ring','Deficit','Archer','Weighted'],note:'Floor push-up variation.'},
+  {id:'l-sit',name:'L-Sit',cat:'Gymnastics',fields:['time'],mods:[],note:'Hold L position on bars, rings, or parallettes.'},
+  {id:'ghd-situp',name:'GHD Sit-Up',cat:'Gymnastics',fields:['reps'],mods:[],note:'Full range sit-up on a GHD machine.'},
+  {id:'ghd-hip-ext',name:'GHD Hip Extension',cat:'Gymnastics',fields:['reps','modifier'],mods:['Hip Extension','Back Extension'],note:'Back extension on a GHD machine.'},
+  {id:'dip-ring-strict',name:'Strict Ring Dip',cat:'Gymnastics',fields:['reps','modifier'],mods:['Strict','Weighted','Banded'],note:''},
+  {id:'v-up',name:'V-Up',cat:'Gymnastics',fields:['reps'],mods:[],note:'Simultaneously raise legs and torso to touch toes.'},
+  {id:'hollow-hold',name:'Hollow Hold / Rock',cat:'Gymnastics',fields:['time','modifier'],mods:['Hold','Rock'],note:'Gymnastic core position.'},
+  {id:'arch-hold',name:'Arch Hold / Rock',cat:'Gymnastics',fields:['time','modifier'],mods:['Hold','Rock'],note:'Superman position extension.'},
+
+  // ── Cardio / Monostructural ───────────────────────────────────────────────
+  {id:'run',name:'Run',cat:'Cardio / Monostructural',fields:['distance','time'],mods:[],unit_d:'m',note:'Running for distance or time.'},
+  {id:'row',name:'Row (Erg / Rower)',cat:'Cardio / Monostructural',fields:['distance','time','calories'],mods:[],unit_d:'m',note:'Concept2 or similar rowing ergometer.'},
+  {id:'assault-bike',name:'Assault Bike / Echo Bike',cat:'Cardio / Monostructural',fields:['calories','time','distance'],mods:[],note:'Air fan bike. Calories most common metric.'},
+  {id:'ski-erg',name:'Ski Erg',cat:'Cardio / Monostructural',fields:['distance','calories','time'],mods:[],unit_d:'m',note:'Concept2 SkiErg, double-arm pull-down.'},
+  {id:'bike-erg',name:'Bike Erg',cat:'Cardio / Monostructural',fields:['distance','calories','time'],mods:[],note:'Concept2 BikeErg.'},
+  {id:'jump-rope',name:'Jump Rope',cat:'Cardio / Monostructural',fields:['reps','time','modifier'],mods:['Single-Under','Double-Under','Triple-Under'],note:'Jump rope. Specify type.'},
+
+  // ── Dumbbell / Kettlebell ─────────────────────────────────────────────────
+  {id:'db-snatch',name:'Dumbbell Snatch',cat:'Dumbbell / Kettlebell',fields:['weight','reps','modifier'],mods:['Single-Arm','Alternating','Both Arms'],note:'Single-arm snatch with dumbbell.'},
+  {id:'db-clean-jerk',name:'Dumbbell Clean & Jerk',cat:'Dumbbell / Kettlebell',fields:['weight','reps','modifier'],mods:['Single-Arm','Alternating','Double'],note:'Clean and jerk with dumbbells.'},
+  {id:'devil-press',name:'Devil Press',cat:'Dumbbell / Kettlebell',fields:['weight','reps'],mods:[],note:'Burpee + double DB snatch.'},
+  {id:'db-thruster',name:'Dumbbell Thruster',cat:'Dumbbell / Kettlebell',fields:['weight','reps'],mods:[],note:'Double DB front squat into overhead press.'},
+  {id:'db-row',name:'Dumbbell Row',cat:'Dumbbell / Kettlebell',fields:['weight','reps','modifier'],mods:['Single-Arm','Bent-Over','Chest-Supported'],note:'Horizontal dumbbell pulling movement.'},
+  {id:'db-press',name:'Dumbbell Press',cat:'Dumbbell / Kettlebell',fields:['weight','reps','modifier'],mods:['Overhead','Bench Flat','Bench Incline','Arnold Press'],note:''},
+  {id:'turkish-getup',name:'Turkish Get-Up (TGU)',cat:'Dumbbell / Kettlebell',fields:['weight','reps'],mods:[],note:'Floor to standing while keeping a weight overhead.'},
+  {id:'kb-deadlift',name:'Kettlebell Deadlift',cat:'Dumbbell / Kettlebell',fields:['weight','reps','modifier'],mods:['Single','Double','Single-Leg'],note:''},
+  {id:'kb-press-oh',name:'Kettlebell Overhead Press',cat:'Dumbbell / Kettlebell',fields:['weight','reps','modifier'],mods:['Strict','Push Press','Single-Arm','Double'],note:''},
+];
+
+// ══════════════════════════════════════════════════════════════════ STATE
+
+let state = {
+  movements: JSON.parse(localStorage.getItem('movements') || 'null') || [...MOVEMENT_DB],
+  workouts: JSON.parse(localStorage.getItem('workouts') || '[]'),
+  bodyweight: JSON.parse(localStorage.getItem('bodyweight') || 'null'),
+  // current workout in progress
+  currentMvs: [],           // [{mvId, name, cat, fields, mods, sets:[{...}], notes}]
+  currentEffort: '',
+  // modal scratch
+  setEditMvIdx: null,
+  setEditSetIdx: null,
+  detailMvId: null,
+  customEditId: null,
+  detailWodIdx: null,
+};
+
+function save() {
+  localStorage.setItem('movements', JSON.stringify(state.movements));
+  localStorage.setItem('workouts', JSON.stringify(state.workouts));
+  cloudSave();
+}
+
+// ══════════════════════════════════════════════════════════════════ NAV
+
+function nav(btn, sec) {
+  document.querySelectorAll('.nb').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.getElementById(sec).classList.add('active');
+  if (sec === 'history') renderHistory();
+  if (sec === 'movements') renderLibrary();
+  if (sec === 'body') setTimeout(renderBodyweight, 0);
+}
+
+function navMobile(btn, sec) {
+  document.querySelectorAll('.bnb[data-sec]').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.nb[data-sec]').forEach(b => b.classList.toggle('active', b.dataset.sec === sec));
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.getElementById(sec).classList.add('active');
+  window.scrollTo(0, 0);
+  if (sec === 'history') renderHistory();
+  if (sec === 'movements') renderLibrary();
+  if (sec === 'body') setTimeout(renderBodyweight, 0);
+}
+
+function switchTab(btn, tabId) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  ['tab-workouts','tab-calendar','tab-movement'].forEach(id => {
+    document.getElementById(id).classList.toggle('hidden', id !== tabId);
+  });
+  if (tabId === 'tab-movement') renderMvHistory();
+  if (tabId === 'tab-calendar') setTimeout(renderCalendar, 0);
+}
+
+// ══════════════════════════════════════════════════════════════════ MODALS
+
+function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
+function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+
+document.querySelectorAll('.overlay').forEach(o => {
+  o.addEventListener('click', e => { if (e.target === o) o.classList.add('hidden'); });
+});
+
+// ══════════════════════════════════════════════════════════════════ INIT
+
+(function init() {
+  // set today's date
+  document.getElementById('wod-date').value = new Date().toISOString().split('T')[0];
+  // Register any aliases on custom movements saved from previous sessions
+  registerCustomAliases();
+  // custom modifier field visibility
+  document.getElementById('c-fields').addEventListener('change', () => {
+    const hasModifier = [...document.querySelectorAll('#c-fields input:checked')].some(i => i.value === 'modifier');
+    document.getElementById('c-mod-wrap').style.display = hasModifier ? '' : 'none';
+  });
+  renderLog();
+  renderLibrary();
+  // initBodyweight() is called deferred — BW_HISTORICAL is defined later in the script
+  setTimeout(initBodyweight, 0);
+})();
+
+// ══════════════════════════════════════════════════════════════════ EFFORT
+
+function setEffort(btn) {
+  document.querySelectorAll('.effort-btn').forEach(b => b.classList.remove('sel'));
+  btn.classList.add('sel');
+  state.currentEffort = btn.dataset.e;
+}
+
+// ══════════════════════════════════════════════════════════════════ PICK MOVEMENT
+
+function openPickMovement() {
+  document.getElementById('pick-search').value = '';
+  document.getElementById('pick-cat').value = '';
+  renderPickList();
+  openModal('m-pick');
+}
+
+function renderPickList() {
+  const q = document.getElementById('pick-search').value.toLowerCase();
+  const cat = document.getElementById('pick-cat').value;
+  const list = state.movements.filter(m =>
+    m.name.toLowerCase().includes(q) && (!cat || m.cat === cat)
+  );
+  document.getElementById('pick-list').innerHTML = list.length
+    ? list.map(m => `
+      <div class="mv-card" onclick="handlePickSelection('${m.id}')">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <strong style="font-size:.92rem;">${m.name}</strong>
+          <span class="badge ${catBadge(m.cat)}">${m.cat}</span>
+        </div>
+        ${m.mods && m.mods.length ? `<div style="font-size:.75rem;color:var(--text2);margin-top:4px;">Styles: ${m.mods.slice(0,4).join(', ')}${m.mods.length>4?'…':''}</div>` : ''}
+      </div>`).join('')
+    : '<div class="empty" style="padding:20px;">No movements found.</div>';
+}
+
+function catBadge(cat) {
+  return {
+    'CrossFit / MetCon':'b-cf',
+    'Olympic Lifting':'b-oly',
+    'Powerlifting / Strength':'b-power',
+    'Gymnastics':'b-gym',
+    'Cardio / Monostructural':'b-cardio',
+    'Dumbbell / Kettlebell':'b-db',
+    'Custom':'b-custom',
+  }[cat] || 'b-custom';
+}
+
+// pickMode: 'log' | 'metcon' | 'edit'
+function handlePickSelection(mvId) {
+  const mv = state.movements.find(m => m.id === mvId);
+  if (!mv) return;
+  const mode = state.pickMode || 'log';
+  state.pickMode = 'log'; // reset
+
+  if (mode === 'metcon') {
+    metconParsed.push({ mvId: mv.id, name: mv.name, cat: mv.cat, fields: mv.fields,
+      mods: mv.mods || [], reps: '', weight: '', weightUnit: 'lbs',
+      modifier: '', rawLine: mv.name, mv });
+    closeModal('m-pick');
+    renderMetconResults();
+    document.getElementById('metcon-add-btn').disabled = false;
+    toast(`${mv.name} added`);
+  } else if (mode === 'edit') {
+    const entry = { mvId: mv.id, name: mv.name, cat: mv.cat, fields: mv.fields, mods: mv.mods || [], notes: '' };
+    const swapIdx = state.editSwapIdx;
+    state.editSwapIdx = null;
+    if (swapIdx != null) {
+      // Keep existing sets but update movement identity and fields
+      const existingSets = state.editWod.movements[swapIdx].sets || [];
+      state.editWod.movements[swapIdx] = { ...entry, sets: existingSets };
+      toast(`Changed to ${mv.name}`);
+    } else {
+      state.editWod.movements.push({ ...entry, sets: [] });
+      toast(`${mv.name} added`);
+    }
+    closeModal('m-pick');
+    renderEditWod();
+  } else {
+    state.currentMvs.push({ mvId: mv.id, name: mv.name, cat: mv.cat,
+      fields: mv.fields, mods: mv.mods || [], sets: [], notes: '' });
+    closeModal('m-pick');
+    renderLog();
+    toast(`${mv.name} added`);
+  }
+}
+
+function addMovementToWorkout(mvId) { handlePickSelection(mvId); }
+
+// ══════════════════════════════════════════════════════════════════ LOG RENDER
+
+function renderLog() {
+  const container = document.getElementById('mv-blocks');
+  const empty = document.getElementById('log-empty');
+  const hasMvs = state.currentMvs.length > 0;
+  empty.classList.toggle('hidden', hasMvs);
+
+  const hasWeight = (mv) => mv.fields.includes('weight');
+
+  container.innerHTML = state.currentMvs.map((mv, mi) => `
+    <div class="mv-block">
+      <div class="mv-header">
+        <div>
+          <div class="mv-title">${mv.name}</div>
+          <span class="badge ${catBadge(mv.cat)}">${mv.cat}</span>
+        </div>
+        <div class="mv-actions">
+          <button class="btn btn-ghost btn-sm" onclick="addSetInline(${mi})">+ Set</button>
+          <button class="btn btn-danger btn-sm" onclick="removeMv(${mi})">✕</button>
+        </div>
+      </div>
+      <div class="set-table-wrap"><table class="set-table">
+        <thead><tr>
+          <th style="width:22px;">#</th>
+          ${mv.fields.includes('weight') ? '<th>Weight</th><th style="width:56px;">Unit</th>' : ''}
+          ${mv.fields.includes('reps') ? '<th>Reps</th>' : ''}
+          ${mv.fields.includes('time') ? '<th>Time</th>' : ''}
+          ${mv.fields.includes('distance') ? '<th>Distance</th><th style="width:60px;">Unit</th>' : ''}
+          ${mv.fields.includes('calories') ? '<th>Cals</th>' : ''}
+          ${mv.fields.includes('modifier') && mv.mods.length ? '<th>Style</th>' : ''}
+          <th>Notes</th>
+          <th style="width:28px;">✓</th>
+          <th style="width:24px;"></th>
+        </tr></thead>
+        <tbody>
+          ${mv.sets.map((s, si) => `
+            <tr style="opacity:${s.done?'0.6':'1'};">
+              <td class="set-num">${si+1}</td>
+              ${mv.fields.includes('weight') ? `
+                <td><input type="number" value="${s.weight||''}" placeholder="0" min="0" step="2.5"
+                  oninput="setField(${mi},${si},'weight',this.value)"></td>
+                <td><select onchange="setField(${mi},${si},'weightUnit',this.value)">
+                  <option value="lbs" ${(s.weightUnit||'lbs')==='lbs'?'selected':''}>lbs</option>
+                  <option value="kg" ${s.weightUnit==='kg'?'selected':''}>kg</option>
+                </select></td>` : ''}
+              ${mv.fields.includes('reps') ? `
+                <td><input type="number" value="${s.reps||''}" placeholder="0" min="0"
+                  oninput="setField(${mi},${si},'reps',this.value)"></td>` : ''}
+              ${mv.fields.includes('time') ? `
+                <td><input type="text" value="${s.time||''}" placeholder="1:30"
+                  oninput="setField(${mi},${si},'time',this.value)"></td>` : ''}
+              ${mv.fields.includes('distance') ? `
+                <td><input type="number" value="${s.distance||''}" placeholder="0" min="0"
+                  oninput="setField(${mi},${si},'distance',this.value)"></td>
+                <td><select onchange="setField(${mi},${si},'distUnit',this.value)">
+                  <option value="m" ${(s.distUnit||'m')==='m'?'selected':''}>m</option>
+                  <option value="ft" ${s.distUnit==='ft'?'selected':''}>ft</option>
+                  <option value="miles" ${s.distUnit==='miles'?'selected':''}>miles</option>
+                  <option value="yds" ${s.distUnit==='yds'?'selected':''}>yds</option>
+                  <option value="km" ${s.distUnit==='km'?'selected':''}>km</option>
+                </select></td>` : ''}
+              ${mv.fields.includes('calories') ? `
+                <td><input type="number" value="${s.calories||''}" placeholder="0" min="0"
+                  oninput="setField(${mi},${si},'calories',this.value)"></td>` : ''}
+              ${mv.fields.includes('modifier') && mv.mods.length ? `
+                <td><select onchange="setField(${mi},${si},'modifier',this.value)">
+                  <option value="">—</option>
+                  ${mv.mods.map(m => `<option value="${m}" ${s.modifier===m?'selected':''}>${m}</option>`).join('')}
+                </select></td>` : ''}
+              <td><input type="text" value="${(s.notes||'').replace(/"/g,'&quot;')}" placeholder="notes…"
+                oninput="setField(${mi},${si},'notes',this.value)"></td>
+              <td><button class="done-btn ${s.done?'done':''}" onclick="toggleDone(${mi},${si})">✓</button></td>
+              <td><button class="btn btn-danger btn-xs" onclick="removeSet(${mi},${si})">✕</button></td>
+            </tr>`).join('')}
+        </tbody>
+      </table></div>
+      ${mv.sets.length === 0 ? '<div style="color:var(--text2);font-size:.82rem;margin-top:8px;">No sets yet — click + Set to add one.</div>' : ''}
+      <div style="margin-top:10px;">
+        <input type="text" placeholder="Movement notes (optional)…" value="${(mv.notes||'').replace(/"/g,'&quot;')}"
+          style="font-size:.82rem;" oninput="state.currentMvs[${mi}].notes=this.value">
+      </div>
+    </div>`).join('');
+}
+
+function setField(mi, si, field, value) {
+  state.currentMvs[mi].sets[si][field] = value;
+}
+
+function addSetInline(mi) {
+  const mv = state.currentMvs[mi];
+  // Copy values from previous set as defaults
+  const prev = mv.sets[mv.sets.length - 1] || {};
+  mv.sets.push({
+    weight: prev.weight || '', weightUnit: prev.weightUnit || 'lbs',
+    reps: '', time: '', distance: '', distUnit: prev.distUnit || 'm',
+    calories: '', modifier: prev.modifier || '', notes: '', done: false,
+  });
+  renderLog();
+  // Focus the first input of the new row
+  setTimeout(() => {
+    const tables = document.querySelectorAll('.mv-block');
+    const block = tables[mi];
+    if (block) {
+      const inputs = block.querySelectorAll('tbody tr:last-child input, tbody tr:last-child select');
+      if (inputs[0]) inputs[0].focus();
+    }
+  }, 30);
+}
+
+function removeSet(mi, si) {
+  state.currentMvs[mi].sets.splice(si, 1);
+  renderLog();
+}
+
+function removeMv(mi) {
+  state.currentMvs.splice(mi, 1);
+  renderLog();
+}
+
+function toggleDone(mi, si) {
+  state.currentMvs[mi].sets[si].done = !state.currentMvs[mi].sets[si].done;
+  renderLog();
+}
+
+// ══════════════════════════════════════════════════════════════════ ADD SET MODAL
+
+function openAddSet(mi) {
+  const mv = state.currentMvs[mi];
+  state.setEditMvIdx = mi;
+  state.setEditSetIdx = null;
+  document.getElementById('m-set-title').textContent = `Log Set – ${mv.name}`;
+
+  // Pre-fill from last set if any
+  const last = mv.sets[mv.sets.length - 1] || {};
+
+  let html = '';
+  if (mv.fields.includes('weight')) html += `
+    <div class="row2 fg">
+      <div><label>Weight</label><input type="number" id="s-weight" placeholder="0" value="${last.weight||''}"></div>
+      <div><label>Unit</label><select id="s-wunit"><option value="lbs" ${(last.weightUnit||'lbs')==='lbs'?'selected':''}>lbs</option><option value="kg" ${last.weightUnit==='kg'?'selected':''}>kg</option></select></div>
+    </div>`;
+  if (mv.fields.includes('reps')) html += `<div class="fg"><label>Reps</label><input type="number" id="s-reps" placeholder="0" value="${last.reps||''}"></div>`;
+  if (mv.fields.includes('time')) html += `<div class="fg"><label>Time (e.g. 2:30 or 45s)</label><input type="text" id="s-time" placeholder="e.g. 1:30" value="${last.time||''}"></div>`;
+  if (mv.fields.includes('distance')) html += `
+    <div class="row2 fg">
+      <div><label>Distance</label><input type="number" id="s-dist" placeholder="0" value="${last.distance||''}"></div>
+      <div><label>Unit</label><select id="s-dunit"><option value="m" ${(last.distUnit||'m')==='m'?'selected':''}>m</option><option value="ft" ${last.distUnit==='ft'?'selected':''}>ft</option><option value="miles" ${last.distUnit==='miles'?'selected':''}>miles</option><option value="yds" ${last.distUnit==='yds'?'selected':''}>yds</option><option value="km" ${last.distUnit==='km'?'selected':''}>km</option></select></div>
+    </div>`;
+  if (mv.fields.includes('calories')) html += `<div class="fg"><label>Calories</label><input type="number" id="s-cals" placeholder="0" value="${last.calories||''}"></div>`;
+  if (mv.fields.includes('modifier') && mv.mods.length) html += `
+    <div class="fg"><label>Style / Modifier</label>
+      <select id="s-mod">
+        <option value="">— Select —</option>
+        ${mv.mods.map(mod => `<option value="${mod}" ${last.modifier===mod?'selected':''}>${mod}</option>`).join('')}
+      </select>
+    </div>`;
+  html += `<div class="fg"><label>Set Notes (optional)</label><input type="text" id="s-notes" placeholder="e.g. felt heavy, grip failed…" value="${last.notes||''}"></div>`;
+
+  document.getElementById('m-set-body').innerHTML = html;
+  openModal('m-set');
+}
+
+function confirmAddSet() {
+  const mi = state.setEditMvIdx;
+  const mv = state.currentMvs[mi];
+  const set = {};
+  if (mv.fields.includes('weight')) { set.weight = document.getElementById('s-weight')?.value || ''; set.weightUnit = document.getElementById('s-wunit')?.value || 'lbs'; }
+  if (mv.fields.includes('reps')) set.reps = document.getElementById('s-reps')?.value || '';
+  if (mv.fields.includes('time')) set.time = document.getElementById('s-time')?.value || '';
+  if (mv.fields.includes('distance')) { set.distance = document.getElementById('s-dist')?.value || ''; set.distUnit = document.getElementById('s-dunit')?.value || 'm'; }
+  if (mv.fields.includes('calories')) set.calories = document.getElementById('s-cals')?.value || '';
+  if (mv.fields.includes('modifier') && mv.mods.length) set.modifier = document.getElementById('s-mod')?.value || '';
+  set.notes = document.getElementById('s-notes')?.value || '';
+  set.done = false;
+  mv.sets.push(set);
+  closeModal('m-set');
+  renderLog();
+}
+
+// ══════════════════════════════════════════════════════════════════ SAVE WORKOUT
+
+function detectMovementsInline() {
+  const text = document.getElementById('wod-metcon').value.trim();
+  if (!text) return toast('Type your workout first');
+  state.pendingRawWod = text;
+  const lines = text.split(/[\n,]+/).map(l => l.trim()).filter(Boolean);
+  let added = 0;
+  const existingIds = new Set(state.currentMvs.map(m => m.mvId));
+  lines.forEach(line => {
+    const result = parseOneLine(line);
+    if (!result) return;
+    const mv = result.mv;
+    // Avoid exact duplicates
+    if (existingIds.has(mv.id)) return;
+    existingIds.add(mv.id);
+    const set = {};
+    if (mv.fields.includes('reps') && result.reps) set.reps = result.reps;
+    if (mv.fields.includes('weight') && result.weight) { set.weight = result.weight; set.weightUnit = result.weightUnit || 'lbs'; }
+    if (mv.fields.includes('modifier') && result.modifier) set.modifier = result.modifier;
+    set.done = false;
+    state.currentMvs.push({
+      mvId: mv.id, name: mv.name, cat: mv.cat, fields: mv.fields, mods: mv.mods || [],
+      sets: Object.keys(set).length > 1 ? [set] : [],
+      notes: '',
+    });
+    added++;
+  });
+  renderLog();
+  toast(added ? `${added} movement${added !== 1 ? 's' : ''} detected ✓` : 'No new movements recognized — try Add Manually');
+}
+
+function saveWorkout() {
+  const name = document.getElementById('wod-name').value.trim();
+  const type = document.getElementById('wod-type').value;
+  const date = document.getElementById('wod-date').value || new Date().toISOString().split('T')[0];
+  const tod = document.getElementById('wod-tod').value;
+  const duration = document.getElementById('wod-duration').value.trim();
+  const notes = document.getElementById('wod-notes').value.trim();
+  const effort = state.currentEffort;
+  const scoreType = document.getElementById('score-type').value;
+  const scoreValue = document.getElementById('score-value').value.trim();
+  const movements = state.currentMvs.map(mv => ({
+    mvId: mv.mvId, name: mv.name, cat: mv.cat,
+    fields: mv.fields || [], mods: mv.mods || [],
+    sets: mv.sets, notes: mv.notes,
+  }));
+  if (!movements.length) return toast('Add at least one movement first.');
+  const rawWod = state.pendingRawWod || document.getElementById('wod-metcon').value.trim();
+  state.pendingRawWod = '';
+  const wod = { id: Date.now(), name, type, date, tod, duration, notes, effort, movements, rawWod, scoreType, scoreValue };
+  state.workouts.unshift(wod);
+  save();
+  // Reset
+  state.currentMvs = [];
+  state.currentEffort = '';
+  ['wod-name','wod-notes','wod-duration','wod-metcon','score-value'].forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; });
+  document.getElementById('wod-tod').value = '';
+  document.getElementById('score-type').value = '';
+  document.getElementById('wod-date').value = new Date().toISOString().split('T')[0];
+  document.querySelectorAll('.effort-btn').forEach(b => b.classList.remove('sel'));
+  renderLog();
+  toast('Workout saved! 💪');
+}
+
+// ══════════════════════════════════════════════════════════════════ HISTORY
+
+function renderHistory() {
+  const list = document.getElementById('history-list');
+  const empty = document.getElementById('history-empty');
+  if (!state.workouts.length) { list.innerHTML = ''; empty.classList.remove('hidden'); return; }
+  empty.classList.add('hidden');
+  // Sort by workout date newest-first; preserve original indices for openWodDetail
+  const sorted = state.workouts
+    .map((w, wi) => ({ w, wi }))
+    .sort((a, b) => (b.w.date || '').localeCompare(a.w.date || ''));
+  list.innerHTML = sorted.map(({ w, wi }) => `
+    <div class="wod-entry" onclick="openWodDetail(${wi})">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+        <div>
+          <strong>${w.name || w.type || 'Workout'}</strong>
+          <span class="badge b-cf" style="margin-left:8px;">${w.type}</span>
+        </div>
+        <span style="font-size:.8rem;color:var(--text2);">${formatDate(w.date)}</span>
+      </div>
+      <div class="wod-meta">
+        ${w.scoreType && w.scoreValue ? `<span style="color:var(--green);font-weight:700;">${w.scoreValue}</span> <span style="opacity:.7">${w.scoreType}</span> · ` : ''}${w.tod ? `🕐 ${w.tod} · ` : ''}${w.effort ? `⚡ ${w.effort} · ` : ''}${w.movements.length} movement${w.movements.length!==1?'s':''}${w.duration ? ` · ${w.duration}` : ''}
+      </div>
+      <div class="tag-row">${w.movements.map(m => `<span class="badge ${catBadge(m.cat)}">${m.name}</span>`).join('')}</div>
+      ${w.notes ? `<div class="notes-pill" style="margin-top:8px;">📝 ${w.notes.slice(0,120)}${w.notes.length>120?'…':''}</div>` : ''}
+    </div>`).join('');
+}
+
+function openWodDetail(wi) {
+  state.detailWodIdx = wi;
+  const w = state.workouts[wi];
+  document.getElementById('wd-title').textContent = w.name || `${w.type} – ${formatDate(w.date)}`;
+
+  let html = '';
+
+  // ── Meta ──────────────────────────────────────────────────────────
+  html += `<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;">
+    <span class="badge b-cf">${w.type}</span>
+    ${w.effort ? `<span class="badge b-power">⚡ ${w.effort}</span>` : ''}
+    ${w.duration ? `<span class="badge b-gym">⏱ ${w.duration}</span>` : ''}
+    ${w.tod ? `<span class="badge b-cardio">🕐 ${w.tod}</span>` : ''}
+  </div>
+  <div style="font-size:.82rem;color:var(--text2);margin-bottom:12px;">${formatDate(w.date)}</div>`;
+
+  // ── Score ─────────────────────────────────────────────────────────
+  if (w.scoreType || w.scoreValue) {
+    html += `<div class="card-sm" style="margin-bottom:12px;display:flex;align-items:baseline;gap:10px;">
+      <span style="font-size:1.5rem;font-weight:800;color:var(--green);">${w.scoreValue || '—'}</span>
+      ${w.scoreType ? `<span style="font-size:.82rem;color:var(--text2);">${w.scoreType}</span>` : ''}
+    </div>`;
+  }
+
+  // ── As Written ───────────────────────────────────────────────────
+  if (w.rawWod) {
+    html += `<div class="card-sm" style="margin-bottom:12px;">
+      <div style="font-size:.7rem;color:var(--text2);font-weight:700;margin-bottom:6px;text-transform:uppercase;letter-spacing:.06em;">As Written</div>
+      <pre style="font-size:.85rem;white-space:pre-wrap;font-family:var(--font);line-height:1.7;color:var(--text);">${w.rawWod}</pre>
+    </div>`;
+  }
+
+  // ── Movements ─────────────────────────────────────────────────────
+  w.movements.forEach(mv => {
+    // Determine which columns have any data
+    const hasWeight   = mv.sets.some(s => s.weight);
+    const hasReps     = mv.sets.some(s => s.reps);
+    const hasTime     = mv.sets.some(s => s.time);
+    const hasDist     = mv.sets.some(s => s.distance);
+    const hasCal      = mv.sets.some(s => s.calories);
+    const hasMod      = mv.sets.some(s => s.modifier);
+    const hasNotes    = mv.sets.some(s => s.notes);
+
+    html += `<div class="card-sm" style="margin-bottom:10px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+        <strong style="font-size:.92rem;">${mv.name}</strong>
+        <span class="badge ${catBadge(mv.cat)}">${mv.cat.split(' /')[0]}</span>
+      </div>`;
+
+    if (mv.sets.length) {
+      const cell = 'padding:6px 10px;text-align:left;white-space:nowrap;';
+      const hcell = `${cell}color:var(--text2);font-size:.72rem;font-weight:700;border-bottom:1px solid var(--border);`;
+      html += `<div style="overflow-x:auto;border-radius:6px;border:1px solid var(--border);">
+        <table style="width:100%;border-collapse:collapse;font-size:.85rem;">
+        <thead><tr>
+          <th style="${hcell}width:32px;">#</th>
+          ${hasWeight ? `<th style="${hcell}">Weight</th>` : ''}
+          ${hasReps   ? `<th style="${hcell}">Reps</th>`   : ''}
+          ${hasTime   ? `<th style="${hcell}">Time</th>`   : ''}
+          ${hasDist   ? `<th style="${hcell}">Distance</th>` : ''}
+          ${hasCal    ? `<th style="${hcell}">Cal</th>`    : ''}
+          ${hasMod    ? `<th style="${hcell}">Style</th>`  : ''}
+          ${hasNotes  ? `<th style="${hcell}width:99%;">Notes</th>` : ''}
+        </tr></thead><tbody>`;
+
+      mv.sets.forEach((s, si) => {
+        const rowStyle = `border-top:1px solid var(--border);color:${s.done?'var(--green)':'var(--text)'};`;
+        html += `<tr style="${rowStyle}">
+          <td style="${cell}color:var(--text2);font-weight:700;">${si+1}</td>
+          ${hasWeight ? `<td style="${cell}">${s.weight||'—'} <span style="color:var(--text2);font-size:.75rem;">${s.weightUnit||'lbs'}</span></td>` : ''}
+          ${hasReps   ? `<td style="${cell}">${s.reps||'—'}</td>` : ''}
+          ${hasTime   ? `<td style="${cell}">${s.time||'—'}</td>` : ''}
+          ${hasDist   ? `<td style="${cell}">${s.distance||'—'} <span style="color:var(--text2);font-size:.75rem;">${s.distUnit||'m'}</span></td>` : ''}
+          ${hasCal    ? `<td style="${cell}">${s.calories||'—'}</td>` : ''}
+          ${hasMod    ? `<td style="${cell};font-style:italic;">${s.modifier||'—'}</td>` : ''}
+          ${hasNotes  ? `<td style="${cell}color:var(--text2);white-space:normal;">${s.notes||''}</td>` : ''}
+        </tr>`;
+      });
+      html += '</tbody></table></div>';
+
+      // Stats row
+      const totalReps = mv.sets.reduce((sum,s) => sum+(parseInt(s.reps)||0), 0);
+      const totalVol  = mv.sets.reduce((sum,s) => sum+(parseFloat(s.weight)||0)*(parseInt(s.reps)||0), 0);
+      const maxW      = Math.max(0, ...mv.sets.map(s => parseFloat(s.weight)||0));
+      const stats = [];
+      if (totalReps) stats.push(`${totalReps} reps`);
+      if (totalVol)  stats.push(`${totalVol.toLocaleString()} lbs vol`);
+      if (maxW)      stats.push(`${maxW} lbs max`);
+      if (stats.length) html += `<div style="font-size:.75rem;color:var(--accent2);margin-top:6px;">📈 ${stats.join(' · ')}</div>`;
+    } else {
+      html += `<div style="font-size:.82rem;color:var(--text2);">No sets logged</div>`;
+    }
+    if (mv.notes) html += `<div class="notes-pill" style="margin-top:6px;">📝 ${mv.notes}</div>`;
+    html += '</div>';
+  });
+
+  // ── Workout notes ─────────────────────────────────────────────────
+  if (w.notes) html += `<div class="notes-pill" style="margin-top:4px;">📝 ${w.notes}</div>`;
+
+  document.getElementById('wd-body').innerHTML = html;
+  openModal('m-wod-detail');
+}
+
+function deleteWorkout() {
+  if (!confirm('Delete this workout? This cannot be undone.')) return;
+  state.workouts.splice(state.detailWodIdx, 1);
+  save();
+  closeModal('m-wod-detail');
+  renderHistory();
+  toast('Workout deleted.');
+}
+
+// ══════════════════════════════════════════════════════════════════ MOVEMENT HISTORY
+
+function renderMvHistory() {
+  const q = document.getElementById('mv-search-hist').value.toLowerCase();
+  const mvNames = new Set();
+  state.workouts.forEach(w => w.movements.forEach(m => mvNames.add(m.name)));
+  const filtered = [...mvNames].filter(n => n.toLowerCase().includes(q)).sort();
+
+  document.getElementById('mv-history-picks').innerHTML = filtered.map(n => `
+    <button class="badge b-cf" style="cursor:pointer;padding:6px 12px;font-size:.8rem;" onclick="showMvHistory('${n.replace(/'/g,"\\'")}')">
+      ${n}
+    </button>`).join('');
+
+  if (!filtered.length && q) {
+    document.getElementById('mv-history-empty').classList.remove('hidden');
+    document.getElementById('mv-history-detail').innerHTML = '';
+  } else {
+    document.getElementById('mv-history-empty').classList.add('hidden');
+  }
+}
+
+function showMvHistory(name) {
+  const entries = [];
+  state.workouts.forEach((w, wi) => {
+    w.movements.filter(m => m.name === name).forEach(m => {
+      entries.push({ wod: w, mv: m, wi });
+    });
+  });
+  if (!entries.length) return;
+
+  document.getElementById('mv-history-empty').classList.add('hidden');
+  let html = `<div class="card"><h3>📈 ${name} — ${entries.length} workout${entries.length!==1?'s':''}</h3>`;
+  entries.forEach(({wod, mv, wi}) => {
+    html += `<div class="mv-history-row">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;gap:8px;">
+        <div>
+          <strong style="font-size:.88rem;">${wod.name || wod.type}</strong>
+          ${wod.scoreValue ? `<span style="color:var(--green);font-size:.82rem;margin-left:6px;">${wod.scoreValue}</span>` : ''}
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+          <span style="font-size:.78rem;color:var(--text2);">${formatDate(wod.date)}</span>
+          <button class="btn btn-ghost btn-xs" onclick="openWodDetail(${wi})">View Workout →</button>
+        </div>
+      </div>
+      ${wod.tod ? `<div style="font-size:.75rem;color:var(--text2);margin-bottom:4px;">🕐 ${wod.tod}</div>` : ''}
+      ${mv.sets.length ? mv.sets.map((s, si) => {
+        const parts = [];
+        if (s.weight) parts.push(`<strong>${s.weight} ${s.weightUnit||'lbs'}</strong>`);
+        if (s.reps) parts.push(`${s.reps} reps`);
+        if (s.time) parts.push(s.time);
+        if (s.distance) parts.push(`${s.distance} ${s.distUnit||'m'}`);
+        if (s.calories) parts.push(`${s.calories} cal`);
+        if (s.modifier) parts.push(`<em>${s.modifier}</em>`);
+        return `<div style="font-size:.82rem;padding:2px 0;">Set ${si+1}: ${parts.join(' · ')}${s.notes?' — <span style="color:var(--text2);">'+s.notes+'</span>':''}</div>`;
+      }).join('') : '<div style="font-size:.82rem;color:var(--text2);">No sets logged</div>'}
+      ${mv.notes ? `<div class="notes-pill" style="margin-top:4px;">📝 ${mv.notes}</div>` : ''}
+    </div>`;
+  });
+  html += '</div>';
+  document.getElementById('mv-history-detail').innerHTML = html;
+}
+
+// ══════════════════════════════════════════════════════════════════ LIBRARY
+
+function renderLibrary() {
+  const q = (document.getElementById('lib-search')?.value || '').toLowerCase();
+  const cat = document.getElementById('lib-cat')?.value || '';
+  const filtered = state.movements.filter(m =>
+    m.name.toLowerCase().includes(q) && (!cat || m.cat === cat)
+  );
+  const grid = document.getElementById('lib-grid');
+  const empty = document.getElementById('lib-empty');
+  empty.classList.toggle('hidden', filtered.length > 0);
+  grid.innerHTML = filtered.map(m => `
+    <div class="mv-card" onclick="openDetail('${m.id}')">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:6px;">
+        <strong style="font-size:.92rem;">${m.name}</strong>
+        <span class="badge ${catBadge(m.cat)}" style="flex-shrink:0;">${m.cat.split(' /')[0]}</span>
+      </div>
+      ${m.mods && m.mods.length ? `<div style="font-size:.75rem;color:var(--text2);margin-top:5px;">Styles: ${m.mods.join(', ')}</div>` : ''}
+      ${m.note ? `<div style="font-size:.78rem;color:var(--text2);margin-top:5px;">${m.note.slice(0,80)}${m.note.length>80?'…':''}</div>` : ''}
+    </div>`).join('');
+}
+
+function openDetail(mvId) {
+  const m = state.movements.find(x => x.id === mvId);
+  state.detailMvId = mvId;
+  document.getElementById('det-name').textContent = m.name;
+  document.getElementById('det-body').innerHTML = `
+    <div style="margin-bottom:12px;">
+      <span class="badge ${catBadge(m.cat)}">${m.cat}</span>
+    </div>
+    ${m.note ? `<p style="font-size:.88rem;color:var(--text2);margin-bottom:14px;line-height:1.6;">${m.note}</p>` : ''}
+    <div class="card-sm" style="margin-bottom:12px;">
+      <strong style="font-size:.8rem;">Tracked Fields</strong>
+      <div class="tag-row" style="margin-top:6px;">
+        ${m.fields.map(f => `<span class="badge b-power">${f}</span>`).join('')}
+      </div>
+    </div>
+    ${m.mods && m.mods.length ? `
+    <div class="card-sm" style="margin-bottom:12px;">
+      <strong style="font-size:.8rem;">Style / Modifier Options</strong>
+      <div class="tag-row" style="margin-top:6px;">
+        ${m.mods.map(mod => `<span class="badge b-gym">${mod}</span>`).join('')}
+      </div>
+    </div>` : ''}
+    ${m.cat === 'Custom' ? `<button class="btn btn-ghost btn-sm" onclick="editCustom('${mvId}')">✏ Edit This Movement</button>` : ''}
+  `;
+  openModal('m-detail');
+}
+
+function addFromDetail() {
+  addMovementToWorkout(state.detailMvId);
+  closeModal('m-detail');
+  // switch to log section
+  document.querySelectorAll('.nb').forEach(b => b.classList.remove('active'));
+  document.querySelector('[data-sec="log"]').classList.add('active');
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.getElementById('log').classList.add('active');
+}
+
+// ══════════════════════════════════════════════════════════════════ CUSTOM MOVEMENT
+
+function openCreateFromPicker() {
+  // Remember we came from the picker so we can auto-add after saving
+  state.createFromPicker = true;
+  // Pre-fill name from search box if anything was typed
+  const q = document.getElementById('pick-search').value.trim();
+  document.getElementById('c-name').value = q;
+  document.getElementById('c-cat').value = 'Custom';
+  document.getElementById('c-notes').value = '';
+  document.getElementById('c-mods').value = '';
+  document.getElementById('c-aliases').value = '';
+  document.querySelectorAll('#c-fields input').forEach(cb => { cb.checked = cb.value === 'reps'; });
+  document.getElementById('c-mod-wrap').style.display = 'none';
+  document.getElementById('custom-title').textContent = 'Create New Movement';
+  state.customEditId = null;
+  openModal('m-custom');
+}
+
+function saveCustomMovement() {
+  const name = document.getElementById('c-name').value.trim();
+  if (!name) return toast('Enter a movement name');
+  const cat = document.getElementById('c-cat').value;
+  const fields = [...document.querySelectorAll('#c-fields input:checked')].map(i => i.value);
+  if (!fields.length) return toast('Select at least one tracking field');
+  const mods    = document.getElementById('c-mods').value.split(',').map(s => s.trim()).filter(Boolean);
+  const aliases = document.getElementById('c-aliases').value.split(',').map(s => s.trim().toLowerCase()).filter(Boolean);
+  const note    = document.getElementById('c-notes').value.trim();
+
+  let savedId;
+  if (state.customEditId) {
+    const idx = state.movements.findIndex(m => m.id === state.customEditId);
+    if (idx >= 0) state.movements[idx] = { ...state.movements[idx], name, cat, fields, mods, aliases, note };
+    savedId = state.customEditId;
+    state.customEditId = null;
+    document.getElementById('custom-title').textContent = 'Add Custom Movement';
+  } else {
+    savedId = 'custom-' + Date.now();
+    state.movements.push({ id: savedId, name, cat, fields, mods, aliases, note });
+  }
+  registerCustomAliases();
+  save();
+  closeModal('m-custom');
+  renderLibrary();
+  toast(`"${name}" saved`);
+
+  // If opened from the picker, auto-add the new movement to wherever we were
+  if (state.createFromPicker) {
+    state.createFromPicker = false;
+    closeModal('m-pick');
+    handlePickSelection(savedId);
+  }
+}
+
+function editCustom(mvId) {
+  const m = state.movements.find(x => x.id === mvId);
+  state.customEditId = mvId;
+  document.getElementById('custom-title').textContent = 'Edit Movement';
+  document.getElementById('c-name').value = m.name;
+  document.getElementById('c-cat').value = m.cat;
+  document.getElementById('c-notes').value = m.note || '';
+  document.getElementById('c-aliases').value = (m.aliases || []).join(', ');
+  document.querySelectorAll('#c-fields input').forEach(cb => {
+    cb.checked = m.fields.includes(cb.value);
+  });
+  document.getElementById('c-mods').value = (m.mods || []).join(', ');
+  const hasModifier = m.fields.includes('modifier');
+  document.getElementById('c-mod-wrap').style.display = hasModifier ? '' : 'none';
+  closeModal('m-detail');
+  openModal('m-custom');
+}
+
+function registerCustomAliases() {
+  state.movements.forEach(m => {
+    if (!m.aliases || !m.aliases.length) return;
+    m.aliases.forEach(alias => {
+      if (alias) ALIASES[alias.toLowerCase()] = m.id;
+    });
+  });
+}
+
+// ══════════════════════════════════════════════════════════════════ REST TIMER
+
+// ══════════════════════════════════════════════════════════════════ METCON BUILDER
+
+// Alias map: lowercase alias → movement id
+// Covers full names, plurals, abbreviations, hyphenated/unhyphenated, common misspellings
+const ALIASES = {
+  // ── Pull-ups ──────────────────────────────────────────────────────
+  'pull-up':'pullup','pull-ups':'pullup','pullup':'pullup','pullups':'pullup',
+  'pull up':'pullup','pull ups':'pullup',
+  'strict pull-up':'pullup','strict pull up':'pullup','strict pullup':'pullup',
+  'kipping pull-up':'pullup','kipping pull up':'pullup','kipping pullup':'pullup',
+  'butterfly pull-up':'pullup','butterfly pull up':'pullup','butterfly pullup':'pullup',
+  'chin-up':'pullup','chin up':'pullup','chinup':'pullup',
+  'chin-ups':'pullup','chin ups':'pullup','chinups':'pullup',
+  'weighted pull-up':'pullup','weighted pullup':'pullup','weighted pull up':'pullup',
+
+  // ── Chest-to-bar ─────────────────────────────────────────────────
+  'c2b':'chest-to-bar','ctb':'chest-to-bar',
+  'chest to bar':'chest-to-bar','chest-to-bar':'chest-to-bar',
+  'chest to bar pull-up':'chest-to-bar','chest to bar pull up':'chest-to-bar',
+  'chest-to-bar pull-up':'chest-to-bar','chest-to-bar pull up':'chest-to-bar',
+
+  // ── Muscle-ups ────────────────────────────────────────────────────
+  'mu':'bar-muscle-up','mus':'bar-muscle-up',
+  'muscle up':'bar-muscle-up','muscle-up':'bar-muscle-up',
+  'muscle ups':'bar-muscle-up','muscle-ups':'bar-muscle-up',
+  'bmu':'bar-muscle-up','bmus':'bar-muscle-up',
+  'bar mu':'bar-muscle-up','bar mus':'bar-muscle-up',
+  'bar muscle up':'bar-muscle-up','bar muscle-up':'bar-muscle-up',
+  'bar muscle ups':'bar-muscle-up','bar muscle-ups':'bar-muscle-up',
+  'rmu':'ring-muscle-up','rmus':'ring-muscle-up',
+  'ring mu':'ring-muscle-up','ring mus':'ring-muscle-up',
+  'ring muscle up':'ring-muscle-up','ring muscle-up':'ring-muscle-up',
+  'ring muscle ups':'ring-muscle-up','ring muscle-ups':'ring-muscle-up',
+
+  // ── Push-ups ─────────────────────────────────────────────────────
+  'push-up':'pushup','push up':'pushup','pushup':'pushup',
+  'push-ups':'pushup','push ups':'pushup','pushups':'pushup',
+  'hrpu':'pushup','hand release push-up':'pushup','hand release push up':'pushup',
+  'hand release pushup':'pushup','hrpus':'pushup',
+  'ring push-up':'pushup','ring push up':'pushup','ring pushup':'pushup',
+  'ring push-ups':'pushup','ring push ups':'pushup',
+
+  // ── HSPU ─────────────────────────────────────────────────────────
+  'hspu':'hspu','hspus':'hspu',
+  'handstand push-up':'hspu','handstand push up':'hspu','handstand pushup':'hspu',
+  'handstand push-ups':'hspu','handstand push ups':'hspu','handstand pushups':'hspu',
+  'strict hspu':'hspu','kipping hspu':'hspu',
+  'pike push-up':'hspu','pike push up':'hspu','pike pushup':'hspu',
+  'pike push-ups':'hspu','pike push ups':'hspu',
+  'db hspu':'hspu','dumbbell hspu':'hspu',
+
+  // ── Handstand / Wall walk ─────────────────────────────────────────
+  'handstand walk':'handstand-walk','handstand walks':'handstand-walk',
+  'hs walk':'handstand-walk','hs walks':'handstand-walk',
+  'wall walk':'wall-walk','wall walks':'wall-walk','ww':'wall-walk',
+
+  // ── T2B / K2E ────────────────────────────────────────────────────
+  't2b':'ttb','ttb':'ttb',
+  'toes to bar':'ttb','toes-to-bar':'ttb','toe to bar':'ttb',
+  'toes to bars':'ttb','toes-to-bars':'ttb',
+  'k2e':'k2e','kte':'k2e',
+  'knees to elbow':'k2e','knees to elbows':'k2e','knees-to-elbow':'k2e',
+  'knees to chest':'k2e',
+
+  // ── Rope climb ───────────────────────────────────────────────────
+  'rope climb':'rope-climb','rope climbs':'rope-climb',
+  'legless rope climb':'rope-climb','legless rope climbs':'rope-climb',
+  'legless':'rope-climb','rc':'rope-climb',
+
+  // ── Dips ─────────────────────────────────────────────────────────
+  'ring dip':'ring-dip','ring dips':'ring-dip','rd':'ring-dip',
+  'bar dip':'bar-dip','bar dips':'bar-dip',
+  'dip':'bar-dip','dips':'bar-dip',
+  'box dip':'bar-dip','box dips':'bar-dip',
+
+  // ── L-sit / V-up / Hollow ────────────────────────────────────────
+  'l-sit':'l-sit','l sit':'l-sit','lsit':'l-sit',
+  'v-up':'v-up','v up':'v-up','vup':'v-up',
+  'v-ups':'v-up','v ups':'v-up','vups':'v-up',
+  'hollow hold':'hollow-hold','hollow holds':'hollow-hold',
+  'hollow rock':'hollow-hold','hollow rocks':'hollow-hold',
+  'arch hold':'arch-hold','arch holds':'arch-hold',
+  'arch rock':'arch-hold','arch rocks':'arch-hold',
+
+  // ── GHD ──────────────────────────────────────────────────────────
+  'ghd':'ghd-situp',
+  'ghd sit-up':'ghd-situp','ghd sit-ups':'ghd-situp',
+  'ghd sit up':'ghd-situp','ghd sit ups':'ghd-situp',
+  'ghd situp':'ghd-situp','ghd situps':'ghd-situp',
+  'ghd hip extension':'ghd-hip-ext','ghd hip extensions':'ghd-hip-ext',
+  'ghd back extension':'ghd-hip-ext','ghd back extensions':'ghd-hip-ext',
+
+  // ── Sit-ups ──────────────────────────────────────────────────────
+  'sit-up':'situp','sit up':'situp','situp':'situp',
+  'sit-ups':'situp','sit ups':'situp','situps':'situp',
+  'abmat sit-up':'situp','abmat sit up':'situp','abmat situp':'situp',
+  'abmat sit-ups':'situp','abmat sit ups':'situp','abmat situps':'situp',
+  'abmat':'situp',
+
+  // ── Pistols ──────────────────────────────────────────────────────
+  'pistol':'pistol','pistols':'pistol',
+  'pistol squat':'pistol','pistol squats':'pistol',
+
+  // ── Lunges ───────────────────────────────────────────────────────
+  'lunge':'lunge','lunges':'lunge',
+  'walking lunge':'lunge','walking lunges':'lunge',
+  'overhead lunge':'lunge','overhead lunges':'lunge',
+  'front rack lunge':'lunge','front rack lunges':'lunge',
+  'reverse lunge':'lunge','reverse lunges':'lunge',
+
+  // ── Step-ups ─────────────────────────────────────────────────────
+  'step up':'step-up','step-up':'step-up','step ups':'step-up','step-ups':'step-up',
+
+  // ── Olympic lifts ─────────────────────────────────────────────────
+  'clean':'clean','cleans':'clean',
+  'squat clean':'clean','squat cleans':'clean',
+  'full clean':'clean','full cleans':'clean',
+
+  'power clean':'power-clean','power cleans':'power-clean',
+  'pc':'power-clean','pcs':'power-clean',
+
+  'hang clean':'clean','hang cleans':'clean',
+  'hang squat clean':'clean','hang squat cleans':'clean',
+
+  'hang power clean':'hang-power-clean','hang power cleans':'hang-power-clean',
+  'hpc':'hang-power-clean','hpcs':'hang-power-clean',
+
+  'high hang clean':'clean','high hang power clean':'hang-power-clean',
+  'high hang power cleans':'hang-power-clean',
+
+  'snatch':'snatch','snatches':'snatch',
+  'squat snatch':'snatch','squat snatches':'snatch',
+  'full snatch':'snatch',
+
+  'power snatch':'power-snatch','power snatches':'power-snatch',
+  'ps':'power-snatch',
+
+  'hang snatch':'snatch','hang snatches':'snatch',
+  'hang power snatch':'snatch','hang power snatches':'snatch',
+  'hps':'snatch',
+  'high hang snatch':'snatch','high hang power snatch':'snatch',
+
+  'muscle snatch':'snatch','muscle snatches':'snatch',
+
+  'clean and jerk':'clean-jerk','clean & jerk':'clean-jerk',
+  'clean jerk':'clean-jerk','c&j':'clean-jerk','cnj':'clean-jerk',
+  'clean and jerks':'clean-jerk','clean & jerks':'clean-jerk',
+
+  'jerk':'jerk','jerks':'jerk',
+  'split jerk':'split-jerk','split jerks':'split-jerk','sj':'split-jerk',
+  'push jerk':'push-jerk','push jerks':'push-jerk','pj':'push-jerk',
+  'push press':'push-press','push presses':'push-press','pp':'push-press',
+
+  'overhead squat':'overhead-squat','overhead squats':'overhead-squat',
+  'ohs':'overhead-squat','oh squat':'overhead-squat','oh squats':'overhead-squat',
+  'snatch balance':'overhead-squat','snatch balances':'overhead-squat',
+  'drop snatch':'overhead-squat','drop snatches':'overhead-squat',
+
+  'snatch pull':'snatch-pull','snatch pulls':'snatch-pull',
+  'clean pull':'clean-pull','clean pulls':'clean-pull',
+
+  // ── Barbell strength ─────────────────────────────────────────────
+  'back squat':'back-squat','back squats':'back-squat',
+  'bs':'back-squat','squat':'back-squat','squats':'back-squat',
+  'high bar squat':'back-squat','high bar squats':'back-squat',
+  'low bar squat':'back-squat','low bar squats':'back-squat',
+  'box squat':'back-squat','box squats':'back-squat',
+  'pause squat':'pause-squat','pause squats':'pause-squat',
+
+  'front squat':'front-squat','front squats':'front-squat',
+  'fs':'front-squat',
+
+  'deadlift':'deadlift','deadlifts':'deadlift',
+  'dl':'deadlift','dls':'deadlift',
+  'conventional deadlift':'deadlift','conventional deadlifts':'deadlift',
+  'sumo deadlift':'deadlift','sumo deadlifts':'deadlift',
+  'stiff leg deadlift':'rdl','stiff leg deadlifts':'rdl',
+  'stiff-leg deadlift':'rdl','stiff-leg deadlifts':'rdl',
+
+  'rdl':'rdl','rdls':'rdl',
+  'romanian deadlift':'rdl','romanian deadlifts':'rdl',
+  'single leg rdl':'rdl','single-leg rdl':'rdl',
+
+  'sdlhp':'sdlhp','sumo deadlift high pull':'sdlhp','sumo dl high pull':'sdlhp',
+
+  'bench press':'bench-press','bench presses':'bench-press',
+  'bench':'bench-press','bp':'bench-press',
+  'flat bench':'bench-press','incline bench':'bench-press',
+
+  'strict press':'strict-press','strict presses':'strict-press',
+  'ohp':'strict-press','overhead press':'strict-press','overhead presses':'strict-press',
+  'military press':'strict-press','military presses':'strict-press',
+  'sp':'strict-press','press':'strict-press','presses':'strict-press',
+
+  'bent-over row':'bent-row','bent over row':'bent-row',
+  'bent-over rows':'bent-row','bent over rows':'bent-row',
+  'barbell row':'bent-row','barbell rows':'bent-row',
+  'bb row':'bent-row','bb rows':'bent-row',
+  'pendlay row':'pendlay-row','pendlay rows':'pendlay-row',
+
+  'good morning':'goodmorning','good mornings':'goodmorning',
+  'gm':'goodmorning','gms':'goodmorning',
+
+  'hip thrust':'hip-thrust','hip thrusts':'hip-thrust',
+  'barbell hip thrust':'hip-thrust','barbell hip thrusts':'hip-thrust',
+
+  'zercher squat':'zercher-squat','zercher squats':'zercher-squat',
+  'trap bar deadlift':'trap-bar-dl','trap bar deadlifts':'trap-bar-dl',
+  'hex bar deadlift':'trap-bar-dl','hex bar deadlifts':'trap-bar-dl',
+  'deficit deadlift':'deficit-dl','deficit deadlifts':'deficit-dl',
+
+  // ── CrossFit / MetCon ────────────────────────────────────────────
+  'thruster':'thruster','thrusters':'thruster',
+  'db thruster':'db-thruster','db thrusters':'db-thruster',
+  'dumbbell thruster':'db-thruster','dumbbell thrusters':'db-thruster',
+
+  'wall ball':'wallball','wall balls':'wallball',
+  'wallball':'wallball','wallballs':'wallball','wb':'wallball','wbs':'wallball',
+  'wall ball shot':'wallball','wall ball shots':'wallball',
+
+  'box jump':'box-jump','box jumps':'box-jump','bj':'box-jump','bjs':'box-jump',
+  'box jump over':'box-jump','box jump overs':'box-jump',
+
+  'burpee':'burpee','burpees':'burpee',
+  'burpee box jump':'burpee-box','burpee box jumps':'burpee-box',
+  'burpee box jump over':'burpee-box','burpee box jump overs':'burpee-box',
+  'bbjo':'burpee-box','bbjos':'burpee-box',
+
+  'double under':'double-under','double unders':'double-under',
+  'double-under':'double-under','double-unders':'double-under',
+  'du':'double-under','dus':'double-under',
+
+  'single under':'single-under','single unders':'single-under',
+  'single-under':'single-under','single-unders':'single-under',
+  'su':'single-under','sus':'single-under',
+  'jump rope':'jump-rope','jump ropes':'jump-rope',
+
+  'kb swing':'kb-swing','kb swings':'kb-swing',
+  'kettlebell swing':'kb-swing','kettlebell swings':'kb-swing',
+  'kbs':'kb-swing',
+  'american kb swing':'kb-swing','american kb swings':'kb-swing',
+  'russian kb swing':'kb-swing','russian kb swings':'kb-swing',
+  'american swing':'kb-swing','russian swing':'kb-swing',
+
+  'kb snatch':'kb-snatch','kb snatches':'kb-snatch',
+  'kettlebell snatch':'kb-snatch','kettlebell snatches':'kb-snatch',
+
+  'kb clean':'kb-clean','kb cleans':'kb-clean',
+  'kettlebell clean':'kb-clean','kettlebell cleans':'kb-clean',
+
+  'kb press':'kb-press-oh','kb presses':'kb-press-oh',
+  'kettlebell press':'kb-press-oh','kettlebell presses':'kb-press-oh',
+
+  'goblet squat':'kb-goblet-squat','goblet squats':'kb-goblet-squat',
+
+  'turkish get-up':'turkish-getup','turkish get up':'turkish-getup',
+  'turkish getup':'turkish-getup','tgu':'turkish-getup','tgus':'turkish-getup',
+  'turkish get-ups':'turkish-getup','turkish get ups':'turkish-getup',
+
+  'farmers carry':'farmers-carry','farmers carries':'farmers-carry',
+  'farmer carry':'farmers-carry','farmers walk':'farmers-carry',
+  'farmers walks':'farmers-carry','farmers carry':'farmers-carry',
+  'suitcase carry':'farmers-carry','suitcase carries':'farmers-carry',
+
+  'sandbag carry':'sandbag-carry','sandbag carries':'sandbag-carry',
+
+  'sdlhp':'sdlhp',
+
+  // ── Dumbbell ────────────────────────────────────────────────────
+  'db snatch':'db-snatch','db snatches':'db-snatch',
+  'dumbbell snatch':'db-snatch','dumbbell snatches':'db-snatch',
+  'single arm snatch':'db-snatch','single-arm snatch':'db-snatch',
+
+  'db clean':'db-clean-jerk','db cleans':'db-clean-jerk',
+  'dumbbell clean':'db-clean-jerk','dumbbell cleans':'db-clean-jerk',
+  'db clean jerk':'db-clean-jerk','db clean and jerk':'db-clean-jerk',
+
+  'devil press':'devil-press','devil presses':'devil-press',
+
+  'db row':'db-row','db rows':'db-row',
+  'dumbbell row':'db-row','dumbbell rows':'db-row',
+
+  'db press':'db-press','db presses':'db-press',
+  'dumbbell press':'db-press','dumbbell presses':'db-press',
+
+  'kb deadlift':'kb-deadlift','kb deadlifts':'kb-deadlift',
+  'kettlebell deadlift':'kb-deadlift','kettlebell deadlifts':'kb-deadlift',
+
+  // ── Cardio / Monostructural ───────────────────────────────────────
+  'run':'run','runs':'run','running':'run',
+  'sprint':'run','sprints':'run',
+  '400m run':'run','800m run':'run','1 mile run':'run','mile run':'run',
+
+  'row':'row','rows':'row','rowing':'row',
+  'erg':'row','erging':'row','rower':'row',
+  'concept2':'row','c2':'row',
+
+  'assault bike':'assault-bike','assault bikes':'assault-bike',
+  'echo bike':'assault-bike','echo bikes':'assault-bike',
+  'airbike':'assault-bike','airbikes':'assault-bike',
+  'airdyne':'assault-bike','airdynes':'assault-bike',
+  'bike':'assault-bike','biking':'assault-bike','cycling':'assault-bike',
+  'air bike':'assault-bike','air bikes':'assault-bike',
+
+  'ski erg':'ski-erg','ski ergs':'ski-erg',
+  'ski':'ski-erg','skiing':'ski-erg',
+
+  'bike erg':'bike-erg','bike ergs':'bike-erg',
+};
+
+// modifier hints within text
+const MOD_HINTS = {
+  'kipping':    'Kipping',  'strict':   'Strict',  'butterfly': 'Butterfly',
+  'weighted':   'Weighted', 'banded':   'Banded',  'legless':   'Legless',
+  'american':   'American (Overhead)', 'russian': 'Russian (Hip Height)',
+  'high bar':   'High Bar', 'low bar':  'Low Bar', 'sumo':      'Sumo',
+  'conventional':'Conventional',
+  'hang':       null, // handled contextually
+};
+
+let metconParsed = []; // [{mvId, name, reps, weight, weightUnit, modifier, rawLine}]
+
+function openMetconBuilder() {
+  document.getElementById('metcon-input').value = '';
+  document.getElementById('metcon-results').innerHTML = '';
+  document.getElementById('metcon-add-btn').disabled = true;
+  metconParsed = [];
+  openModal('m-metcon');
+}
+
+function parseMetcon() {
+  const raw = document.getElementById('metcon-input').value;
+  metconParsed = [];
+  if (!raw.trim()) {
+    document.getElementById('metcon-results').innerHTML = '';
+    document.getElementById('metcon-add-btn').disabled = true;
+    return;
+  }
+
+  // Normalize & split into lines/segments
+  const lines = raw.split(/[\n,]+/).map(l => l.trim()).filter(Boolean);
+
+  for (const line of lines) {
+    const result = parseOneLine(line);
+    if (result) metconParsed.push({ ...result, rawLine: line });
+  }
+
+  renderMetconResults();
+}
+
+function parseOneLine(line) {
+  // Strip leading structure like "21-15-9", "3 RFT:", "AMRAP 20:", etc.
+  // We want to find a movement name + optional reps/weight
+  let text = line
+    .replace(/^\d+[\-x×]\d+([\-x×]\d+)*/i, '')  // rep schemes like 21-15-9 or 5x3
+    .replace(/^(amrap|emom|rft|for time|rounds?|tabata)\s*\d*\s*:?\s*/i, '')
+    .replace(/^(rx|scaled)\s*/i, '')
+    .trim();
+
+  // Extract weight: patterns like 95#, 95 lbs, 95lb, 95kg, @95, @ 95#
+  let weight = '', weightUnit = 'lbs';
+  const wMatch = text.match(/[@\s](\d+(?:\.\d+)?)\s*(#|lbs?|kg)\b/i)
+               || text.match(/\b(\d+(?:\.\d+)?)\s*(#|lbs?|kg)\b/i);
+  if (wMatch) {
+    weight = wMatch[1];
+    weightUnit = wMatch[2].toLowerCase() === 'kg' ? 'kg' : 'lbs';
+    text = text.replace(wMatch[0], ' ').trim();
+  }
+
+  // Extract leading reps: "21 Thrusters" or "10 reps"
+  let reps = '';
+  const repMatch = text.match(/^(\d+)\s+/);
+  if (repMatch) {
+    reps = repMatch[1];
+    text = text.slice(repMatch[0].length).trim();
+  }
+
+  // Remove trailing "reps" / "rep" word
+  text = text.replace(/\s+reps?$/i, '').trim();
+
+  // Extract modifier hints from text
+  let detectedMod = '';
+  for (const [hint, modVal] of Object.entries(MOD_HINTS)) {
+    if (modVal && new RegExp(`\\b${hint}\\b`, 'i').test(text)) {
+      detectedMod = modVal;
+      // Don't strip it from text yet — it helps match (e.g. "kipping pull-up")
+      break;
+    }
+  }
+
+  // Try to match movement — longest match first
+  const lc = text.toLowerCase().replace(/[^a-z0-9\s\-&]/g, '').replace(/\s+/g, ' ').trim();
+  let mvId = null, mvName = null;
+
+  // Normalize: collapse hyphens/underscores to spaces, strip possessives
+  const normalized = lc.replace(/[-_]/g, ' ').replace(/'\s*s\b/g, '').replace(/\s+/g, ' ').trim();
+  const words = normalized.split(' ');
+
+  // Helper: try alias lookup, with automatic de-pluralization fallback
+  function lookupAlias(phrase) {
+    if (ALIASES[phrase]) return ALIASES[phrase];
+    // Try stripping trailing 's' (plural → singular) then 'es'
+    if (phrase.endsWith('es')) { const t = phrase.slice(0,-2); if (ALIASES[t]) return ALIASES[t]; }
+    if (phrase.endsWith('s'))  { const t = phrase.slice(0,-1);  if (ALIASES[t]) return ALIASES[t]; }
+    // Also check movement names directly (for custom movements)
+    const direct = state.movements.find(m => m.name.toLowerCase() === phrase ||
+      m.name.toLowerCase().replace(/[-_]/g,' ') === phrase ||
+      m.name.toLowerCase().replace(/[-_]/g,' ').replace(/s$/,'') === phrase);
+    if (direct) return direct.id;
+    return null;
+  }
+
+  // Try n-gram matches longest to shortest
+  outer: for (let len = Math.min(words.length, 5); len >= 1; len--) {
+    for (let start = 0; start <= words.length - len; start++) {
+      const phrase = words.slice(start, start + len).join(' ');
+      const found = lookupAlias(phrase);
+      if (found) { mvId = found; break outer; }
+    }
+  }
+
+  if (!mvId) return null;
+
+  // Resolve to actual movement
+  const mv = state.movements.find(m => m.id === mvId);
+  if (!mv) return null;
+  mvName = mv.name;
+
+  // Pick modifier: prefer hint if valid, else first option
+  let modifier = '';
+  if (detectedMod && mv.mods && mv.mods.includes(detectedMod)) {
+    modifier = detectedMod;
+  } else if (mv.mods && mv.mods.length === 1) {
+    modifier = mv.mods[0];
+  }
+
+  return { mvId, name: mvName, reps, weight, weightUnit, modifier, mv };
+}
+
+function renderMetconResults() {
+  const el = document.getElementById('metcon-results');
+  if (!metconParsed.length) {
+    el.innerHTML = '<div style="font-size:.82rem;color:var(--text2);padding:8px 0;">No movements recognized yet — keep typing.</div>';
+    document.getElementById('metcon-add-btn').disabled = true;
+    return;
+  }
+
+  document.getElementById('metcon-add-btn').disabled = false;
+  el.innerHTML = `
+    <div style="font-size:.8rem;color:var(--text2);margin-bottom:8px;">${metconParsed.length} movement${metconParsed.length!==1?'s':''} recognized — edit below if needed, then click Add.</div>
+    ${metconParsed.map((p, i) => `
+      <div class="card-sm" style="margin-bottom:8px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+          <div>
+            <strong style="font-size:.9rem;">${p.name}</strong>
+            <span class="badge ${catBadge(p.mv.cat)}" style="margin-left:6px;">${p.mv.cat.split(' /')[0]}</span>
+          </div>
+          <button class="btn btn-danger btn-xs" onclick="removeMetconItem(${i})">✕</button>
+        </div>
+        <div style="font-size:.75rem;color:var(--text2);margin-bottom:6px;">From: <em>${p.rawLine}</em></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          ${p.mv.fields.includes('reps') ? `
+            <div style="flex:1;min-width:80px;">
+              <label style="font-size:.72rem;">Reps</label>
+              <input type="number" value="${p.reps}" placeholder="—" style="padding:5px 8px;font-size:.82rem;"
+                oninput="metconParsed[${i}].reps=this.value">
+            </div>` : ''}
+          ${p.mv.fields.includes('weight') ? `
+            <div style="flex:1;min-width:80px;">
+              <label style="font-size:.72rem;">Weight</label>
+              <input type="number" value="${p.weight}" placeholder="—" style="padding:5px 8px;font-size:.82rem;"
+                oninput="metconParsed[${i}].weight=this.value">
+            </div>
+            <div style="flex:0 0 70px;">
+              <label style="font-size:.72rem;">Unit</label>
+              <select style="padding:5px 8px;font-size:.82rem;" onchange="metconParsed[${i}].weightUnit=this.value">
+                <option value="lbs" ${p.weightUnit==='lbs'?'selected':''}>lbs</option>
+                <option value="kg" ${p.weightUnit==='kg'?'selected':''}>kg</option>
+              </select>
+            </div>` : ''}
+          ${p.mv.fields.includes('time') ? `
+            <div style="flex:1;min-width:80px;">
+              <label style="font-size:.72rem;">Time</label>
+              <input type="text" value="${p.time||''}" placeholder="e.g. 1:30" style="padding:5px 8px;font-size:.82rem;"
+                oninput="metconParsed[${i}].time=this.value">
+            </div>` : ''}
+          ${p.mv.fields.includes('distance') ? `
+            <div style="flex:1;min-width:80px;">
+              <label style="font-size:.72rem;">Distance</label>
+              <input type="number" value="${p.distance||''}" placeholder="—" style="padding:5px 8px;font-size:.82rem;"
+                oninput="metconParsed[${i}].distance=this.value">
+            </div>
+            <div style="flex:0 0 70px;">
+              <label style="font-size:.72rem;">Unit</label>
+              <select style="padding:5px 8px;font-size:.82rem;" onchange="metconParsed[${i}].distUnit=this.value">
+                <option value="m">m</option><option value="ft">ft</option>
+                <option value="miles">miles</option><option value="yds">yds</option><option value="km">km</option>
+              </select>
+            </div>` : ''}
+          ${p.mv.fields.includes('calories') ? `
+            <div style="flex:1;min-width:80px;">
+              <label style="font-size:.72rem;">Calories</label>
+              <input type="number" value="${p.calories||''}" placeholder="—" style="padding:5px 8px;font-size:.82rem;"
+                oninput="metconParsed[${i}].calories=this.value">
+            </div>` : ''}
+          ${p.mv.fields.includes('modifier') && p.mv.mods.length ? `
+            <div style="flex:1;min-width:100px;">
+              <label style="font-size:.72rem;">Style</label>
+              <select style="padding:5px 8px;font-size:.82rem;" onchange="metconParsed[${i}].modifier=this.value">
+                <option value="">— any —</option>
+                ${p.mv.mods.map(m => `<option value="${m}" ${p.modifier===m?'selected':''}>${m}</option>`).join('')}
+              </select>
+            </div>` : ''}
+        </div>
+      </div>`).join('')}`;
+}
+
+function removeMetconItem(i) {
+  metconParsed.splice(i, 1);
+  renderMetconResults();
+}
+
+function addMetconMovements() {
+  if (!metconParsed.length) return;
+  // Store original WOD text on state so saveWorkout can pick it up
+  state.pendingRawWod = document.getElementById('metcon-input').value.trim();
+  metconParsed.forEach(p => {
+    const set = {};
+    if (p.mv.fields.includes('reps') && p.reps) set.reps = p.reps;
+    if (p.mv.fields.includes('weight') && p.weight) { set.weight = p.weight; set.weightUnit = p.weightUnit || 'lbs'; }
+    if (p.mv.fields.includes('time') && p.time) set.time = p.time;
+    if (p.mv.fields.includes('distance') && p.distance) { set.distance = p.distance; set.distUnit = p.distUnit || 'm'; }
+    if (p.mv.fields.includes('calories') && p.calories) set.calories = p.calories;
+    if (p.mv.fields.includes('modifier') && p.modifier) set.modifier = p.modifier;
+    set.done = false;
+    state.currentMvs.push({
+      mvId: p.mvId, name: p.name, cat: p.mv.cat, fields: p.mv.fields, mods: p.mv.mods || [],
+      sets: Object.keys(set).length > 1 ? [set] : [],
+      notes: '',
+    });
+  });
+  closeModal('m-metcon');
+  renderLog();
+  toast(`${metconParsed.length} movements added`);
+}
+
+// ══════════════════════════════════════════════════════════════════ EDIT WORKOUT
+
+function openEditWorkout() {
+  const w = state.workouts[state.detailWodIdx];
+  // Deep copy so edits don't mutate live data until save
+  state.editWod = JSON.parse(JSON.stringify(w));
+  renderEditWod();
+  openModal('m-edit-wod');
+}
+
+function renderEditWod() {
+  const w = state.editWod;
+  const effortLevels = ['1 – Very Light','2 – Light','3 – Moderate','4 – Hard','5 – Max Effort'];
+  const scoreTypes = ['','Time','Rounds + Reps','Reps','Weight','Distance','Calories','Points','% Bodyweight','Pass/Fail'];
+
+  let html = `
+    <div class="fg">
+      <label>Date</label><input type="date" id="ew-date" value="${w.date||''}">
+    </div>
+    <div class="fg">
+      <label>Workout Name</label>
+      <input type="text" id="ew-name" value="${esc(w.name)}" placeholder="e.g. Fran, Back Squat…">
+    </div>
+    <div class="fg">
+      <label>Type</label>
+      <select id="ew-type">
+        ${['Strength','WOD','AMRAP','For Time','EMOM','Tabata','RFT','Open','Other'].map(t =>
+          `<option value="${t}" ${w.type===t?'selected':''}>${t}</option>`).join('')}
+      </select>
+    </div>
+    <div class="row2 fg">
+      <div><label>Score Type</label><select id="ew-score-type">
+        ${scoreTypes.map(t => `<option value="${t}" ${(w.scoreType||'')=== t?'selected':''}>${t||'— none —'}</option>`).join('')}
+      </select></div>
+      <div><label>Score</label><input type="text" id="ew-score-value" value="${esc(w.scoreValue)}" placeholder="e.g. 8:42, 12+5"></div>
+    </div>
+    <div class="fg">
+      <label>Workout / Metcon Text</label>
+      <textarea id="ew-rawwod" rows="3" placeholder="The workout as written…">${esc(w.rawWod||'')}</textarea>
+    </div>
+    <div class="row2 fg">
+      <div><label>Time of Day</label><select id="ew-tod">
+        <option value="">— optional —</option>
+        ${['Early Morning (5–7am)','Morning (7–10am)','Midday (10am–1pm)','Afternoon (1–5pm)','Evening (5–8pm)','Night (8pm+)'].map(t =>
+          `<option value="${t}" ${w.tod===t?'selected':''}>${t}</option>`).join('')}
+      </select></div>
+      <div><label>Duration</label><input type="text" id="ew-duration" value="${esc(w.duration)}" placeholder="e.g. 45 min"></div>
+    </div>
+    <div class="fg">
+      <label>Effort</label>
+      <div class="effort-row">${effortLevels.map(e =>
+        `<button class="effort-btn ${w.effort===e?'sel':''}" data-e="${e}" onclick="setEditEffort(this)">${e}</button>`).join('')}
+      </div>
+    </div>
+    <div class="fg">
+      <label>Notes</label>
+      <textarea id="ew-notes" rows="2">${esc(w.notes)}</textarea>
+    </div>
+
+    <div style="display:flex;justify-content:space-between;align-items:center;margin:16px 0 10px;">
+      <strong style="font-size:.9rem;">Movements</strong>
+      <button class="btn btn-ghost btn-sm" onclick="openEditAddMovement()">+ Add Movement</button>
+    </div>
+    <div id="ew-mv-list">`;
+
+  w.movements.forEach((mv, mi) => {
+    // Resolve fields/mods from library if missing (old workouts didn't store them)
+    const libMv = state.movements.find(m => m.id === mv.mvId) || {};
+    const fields = (mv.fields && mv.fields.length) ? mv.fields : (libMv.fields || ['weight','reps']);
+    const mods   = (mv.mods && mv.mods.length) ? mv.mods : (libMv.mods || []);
+
+    const hasW = fields.includes('weight');
+    const hasR = fields.includes('reps');
+    const hasT = fields.includes('time');
+    const hasD = fields.includes('distance');
+    const hasC = fields.includes('calories');
+    const hasM = fields.includes('modifier') && mods.length;
+
+    html += `<div class="mv-block" id="ew-mv-${mi}">
+      <div class="mv-header">
+        <div>
+          <span class="mv-title">${mv.name}</span>
+          <span class="badge ${catBadge(mv.cat)}" style="margin-left:6px;">${(mv.cat||'').split(' /')[0]}</span>
+        </div>
+        <div class="mv-actions">
+          <button class="btn btn-ghost btn-sm" onclick="editAddSet(${mi})">+ Set</button>
+          <button class="btn btn-ghost btn-sm" onclick="openEditSwapMovement(${mi})">Change</button>
+          <button class="btn btn-danger btn-sm" onclick="editRemoveMv(${mi})">✕</button>
+        </div>
+      </div>
+      ${mv.sets.length ? `<div style="overflow-x:auto;"><table class="set-table">
+        <thead><tr>
+          <th>#</th>
+          ${hasW ? '<th>Weight</th><th>Unit</th>' : ''}
+          ${hasR ? '<th>Reps</th>' : ''}
+          ${hasT ? '<th>Time</th>' : ''}
+          ${hasD ? '<th>Dist</th><th>Unit</th>' : ''}
+          ${hasC ? '<th>Cal</th>' : ''}
+          ${hasM ? '<th>Style</th>' : ''}
+          <th>Notes</th><th></th>
+        </tr></thead><tbody>
+        ${mv.sets.map((s, si) => `<tr>
+          <td class="set-num">${si+1}</td>
+          ${hasW ? `
+            <td><input type="number" value="${s.weight||''}" placeholder="0" style="width:70px;" onchange="editSetField(${mi},${si},'weight',this.value)"></td>
+            <td><select style="width:60px;" onchange="editSetField(${mi},${si},'weightUnit',this.value)">
+              <option value="lbs" ${(s.weightUnit||'lbs')==='lbs'?'selected':''}>lbs</option>
+              <option value="kg" ${s.weightUnit==='kg'?'selected':''}>kg</option>
+            </select></td>` : ''}
+          ${hasR ? `<td><input type="number" value="${s.reps||''}" placeholder="0" style="width:60px;" onchange="editSetField(${mi},${si},'reps',this.value)"></td>` : ''}
+          ${hasT ? `<td><input type="text" value="${s.time||''}" placeholder="1:30" style="width:70px;" onchange="editSetField(${mi},${si},'time',this.value)"></td>` : ''}
+          ${hasD ? `
+            <td><input type="number" value="${s.distance||''}" placeholder="0" style="width:70px;" onchange="editSetField(${mi},${si},'distance',this.value)"></td>
+            <td><select style="width:60px;" onchange="editSetField(${mi},${si},'distUnit',this.value)">
+              <option value="m" ${(s.distUnit||'m')==='m'?'selected':''}>m</option>
+              <option value="ft" ${s.distUnit==='ft'?'selected':''}>ft</option>
+              <option value="miles" ${s.distUnit==='miles'?'selected':''}>miles</option>
+              <option value="yds" ${s.distUnit==='yds'?'selected':''}>yds</option>
+              <option value="km" ${s.distUnit==='km'?'selected':''}>km</option>
+            </select></td>` : ''}
+          ${hasC ? `<td><input type="number" value="${s.calories||''}" placeholder="0" style="width:60px;" onchange="editSetField(${mi},${si},'calories',this.value)"></td>` : ''}
+          ${hasM ? `
+            <td><select style="width:110px;" onchange="editSetField(${mi},${si},'modifier',this.value)">
+              <option value="">—</option>
+              ${mods.map(m => `<option value="${m}" ${s.modifier===m?'selected':''}>${m}</option>`).join('')}
+            </select></td>` : ''}
+          <td><input type="text" value="${esc(s.notes||'')}" placeholder="notes…" onchange="editSetField(${mi},${si},'notes',this.value)"></td>
+          <td><button class="btn btn-danger btn-xs" onclick="editRemoveSet(${mi},${si})">✕</button></td>
+        </tr>`).join('')}
+        </tbody></table></div>` : '<div style="font-size:.82rem;color:var(--text2);">No sets — click + Set to add one.</div>'}
+      <div style="margin-top:10px;">
+        <input type="text" placeholder="Movement notes…" value="${esc(mv.notes||'')}" style="font-size:.82rem;"
+          oninput="state.editWod.movements[${mi}].notes=this.value">
+      </div>
+    </div>`;
+  });
+
+  html += '</div>'; // ew-mv-list
+  document.getElementById('edit-wod-body').innerHTML = html;
+}
+
+function esc(s) { return (s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
+
+function setEditEffort(btn) {
+  document.querySelectorAll('#m-edit-wod .effort-btn').forEach(b => b.classList.remove('sel'));
+  btn.classList.add('sel');
+  state.editWod.effort = btn.dataset.e;
+}
+
+function editSetField(mi, si, field, value) {
+  state.editWod.movements[mi].sets[si][field] = value;
+}
+
+function editRemoveSet(mi, si) {
+  state.editWod.movements[mi].sets.splice(si, 1);
+  renderEditWod();
+}
+
+function editRemoveMv(mi) {
+  state.editWod.movements.splice(mi, 1);
+  renderEditWod();
+}
+
+function editAddSet(mi) {
+  const mv = state.editWod.movements[mi];
+  const last = mv.sets[mv.sets.length - 1] || {};
+  const set = { ...last, done: false, notes: '' };
+  mv.sets.push(set);
+  renderEditWod();
+  // Scroll to the new set
+  setTimeout(() => {
+    const el = document.getElementById(`ew-mv-${mi}`);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }, 50);
+}
+
+function openEditAddMovement() {
+  state.pickMode = 'edit';
+  state.editSwapIdx = null;
+  document.getElementById('pick-search').value = '';
+  document.getElementById('pick-cat').value = '';
+  renderPickList();
+  openModal('m-pick');
+}
+
+function openEditSwapMovement(mi) {
+  state.pickMode = 'edit';
+  state.editSwapIdx = mi; // swap instead of add
+  document.getElementById('pick-search').value = '';
+  document.getElementById('pick-cat').value = '';
+  renderPickList();
+  openModal('m-pick');
+}
+
+function openMetconManualPick() {
+  state.pickMode = 'metcon';
+  document.getElementById('pick-search').value = '';
+  document.getElementById('pick-cat').value = '';
+  renderPickList();
+  openModal('m-pick');
+}
+
+function saveEditWorkout() {
+  const w = state.editWod;
+  w.name       = document.getElementById('ew-name').value.trim();
+  w.type       = document.getElementById('ew-type').value;
+  w.date       = document.getElementById('ew-date').value;
+  w.tod        = document.getElementById('ew-tod').value;
+  w.duration   = document.getElementById('ew-duration').value.trim();
+  w.notes      = document.getElementById('ew-notes').value.trim();
+  w.rawWod     = document.getElementById('ew-rawwod').value.trim();
+  w.scoreType  = document.getElementById('ew-score-type').value;
+  w.scoreValue = document.getElementById('ew-score-value').value.trim();
+  state.workouts[state.detailWodIdx] = w;
+  save();
+  closeModal('m-edit-wod');
+  openWodDetail(state.detailWodIdx); // refresh detail view
+  renderHistory();
+  toast('Workout updated ✓');
+}
+
+// ══════════════════════════════════════════════════════════════════ REST TIMER
+let timerSecs = 90, timerRunning = false, timerInterval = null;
+function setTimer(s) { clearInterval(timerInterval); timerRunning = false; timerSecs = s; updTimer(); document.getElementById('timer-btn').textContent = '▶ Start'; }
+function resetTimer() { clearInterval(timerInterval); timerRunning = false; updTimer(); document.getElementById('timer-btn').textContent = '▶ Start'; }
+function toggleTimer() {
+  if (timerRunning) { clearInterval(timerInterval); timerRunning = false; document.getElementById('timer-btn').textContent = '▶ Resume'; }
+  else { timerRunning = true; document.getElementById('timer-btn').textContent = '⏸ Pause'; timerInterval = setInterval(() => { timerSecs--; updTimer(); if (timerSecs<=0){clearInterval(timerInterval);timerRunning=false;document.getElementById('timer-btn').textContent='▶ Start';toast("Time's up! 💪");}}, 1000); }
+}
+function updTimer() { const m=Math.floor(timerSecs/60),s=timerSecs%60; document.getElementById('timer-disp').textContent = m>0?`${m}:${s.toString().padStart(2,'0')}`:`${timerSecs}s`; }
+
+// ══════════════════════════════════════════════════════════════════ UTILS
+
+// ══════════════════════════════════════════════════════════════════ FIREBASE SYNC
+
+var _db = null, _auth = null, _uid = null;
+
+function fbConfigKey() { return 'bobwod_fb_config'; }
+
+function storedConfig() {
+  try { return JSON.parse(localStorage.getItem(fbConfigKey()) || 'null'); } catch { return null; }
+}
+
+function initFirebase(configObj) {
+  // Accept config from modal textarea or stored value
+  if (!configObj) {
+    let raw = document.getElementById('fb-config-input')?.value.trim();
+    if (!raw) return toast('Paste your Firebase config first');
+    // Strip comments and variable declaration, then eval as JS object
+    raw = raw
+      .replace(/\/\/[^\n]*/g, '')
+      .replace(/\/\*[\s\S]*?\*\//g, '')
+      .replace(/^\s*const\s+\w+\s*=\s*/m, '')
+      .replace(/;\s*$/, '')
+      .trim();
+    try { configObj = new Function('return (' + raw + ')')(); } catch(e) {
+      return toast('Could not parse config: ' + e.message);
+    }
+  }
+  if (!configObj.apiKey || !configObj.projectId) return toast('Config missing apiKey or projectId');
+
+  try {
+    // Avoid re-initialising if already done
+    if (!firebase.apps.length) {
+      firebase.initializeApp(configObj);
+    }
+    _db   = firebase.firestore();
+    _auth = firebase.auth();
+    localStorage.setItem(fbConfigKey(), JSON.stringify(configObj));
+    setSyncUI('signin');
+    toast('Firebase connected — sign in to start syncing');
+
+    _auth.onAuthStateChanged(user => {
+      if (user) {
+        _uid = user.uid;
+        setSyncUI('signedIn', user);
+        loadFromCloud();
+      } else {
+        _uid = null;
+        setSyncUI('signin');
+      }
+    });
+  } catch(e) {
+    toast('Firebase error: ' + e.message);
+    console.error(e);
+    setSyncUI('signin'); // still show the panel so user isn't stuck with nothing
+  }
+}
+
+function setSyncUI(state, user) {
+  document.getElementById('sync-setup').classList.add('hidden');
+  document.getElementById('sync-signin').classList.add('hidden');
+  document.getElementById('sync-signedIn').classList.add('hidden');
+
+  const dot   = document.getElementById('sync-dot');
+  const label = document.getElementById('sync-label');
+
+  if (state === 'setup') {
+    document.getElementById('sync-setup').classList.remove('hidden');
+    dot.className = 'sync-dot sync-off';
+    label.textContent = 'Cloud Sync';
+  } else if (state === 'signin') {
+    document.getElementById('sync-signin').classList.remove('hidden');
+    dot.className = 'sync-dot sync-off';
+    label.textContent = 'Sign In';
+  } else if (state === 'signedIn') {
+    document.getElementById('sync-signedIn').classList.remove('hidden');
+    dot.className = 'sync-dot sync-ok';
+    label.textContent = 'Synced';
+    if (user) {
+      document.getElementById('sync-user-name').textContent = user.displayName || 'Signed In';
+      document.getElementById('sync-user-email').textContent = user.email || '';
+      const avatar = document.getElementById('sync-avatar');
+      if (user.photoURL) { avatar.src = user.photoURL; avatar.style.display = ''; }
+    }
+  } else if (state === 'syncing') {
+    dot.className = 'sync-dot sync-busy';
+    label.textContent = 'Syncing…';
+  } else if (state === 'error') {
+    dot.className = 'sync-dot sync-err';
+    label.textContent = 'Sync Error';
+  }
+}
+
+function signInGoogle() {
+  if (!_auth) return toast('Firebase not initialised');
+  const provider = new firebase.auth.GoogleAuthProvider();
+  _auth.signInWithPopup(provider).catch(e => toast('Sign-in failed: ' + e.message));
+}
+
+function signOutUser() {
+  if (!_auth) return;
+  _auth.signOut().then(() => { _uid = null; setSyncUI('signin'); closeModal('m-sync'); toast('Signed out'); });
+}
+
+function clearFirebaseConfig() {
+  localStorage.removeItem(fbConfigKey());
+  _db = null; _auth = null; _uid = null;
+  setSyncUI('setup');
+  toast('Firebase config removed');
+}
+
+// ── Firestore helpers ──────────────────────────────────────────────────────
+
+function userDoc(path) {
+  return _db.collection('users').doc(_uid).collection('data').doc(path);
+}
+
+async function cloudSave() {
+  if (!_db || !_uid) return;
+  setSyncUI('syncing');
+  try {
+    // Store workouts and custom movements in separate docs
+    const customMovements = state.movements.filter(m => m.id && m.id.startsWith('custom-'));
+    await userDoc('workouts').set({ workouts: state.workouts, updatedAt: Date.now() });
+    await userDoc('movements').set({ movements: customMovements, updatedAt: Date.now() });
+    if (state.bodyweight?.length) await userDoc('bodyweight').set({ entries: state.bodyweight, updatedAt: Date.now() });
+    setSyncUI('signedIn', _auth.currentUser);
+    const msg = `Last synced ${new Date().toLocaleTimeString()}`;
+    const el = document.getElementById('sync-status-msg');
+    if (el) el.textContent = '✓ ' + msg;
+  } catch(e) {
+    setSyncUI('error');
+    console.error('Cloud save failed:', e);
+    toast('Sync error — changes saved locally');
+  }
+}
+
+async function loadFromCloud() {
+  if (!_db || !_uid) return;
+  setSyncUI('syncing');
+  try {
+    const [wSnap, mSnap] = await Promise.all([
+      userDoc('workouts').get(),
+      userDoc('movements').get(),
+    ]);
+
+    if (wSnap.exists) {
+      const cloudWorkouts = wSnap.data().workouts || [];
+      // Merge: prefer cloud, keep any local-only entries not yet synced
+      const cloudIds = new Set(cloudWorkouts.map(w => w.id));
+      const localOnly = state.workouts.filter(w => !cloudIds.has(w.id));
+      state.workouts = [...cloudWorkouts, ...localOnly];
+      localStorage.setItem('workouts', JSON.stringify(state.workouts));
+    }
+
+    if (mSnap.exists) {
+      const cloudCustom = mSnap.data().movements || [];
+      // Merge custom movements: add any from cloud not already in local list
+      const localIds = new Set(state.movements.map(m => m.id));
+      cloudCustom.forEach(m => { if (!localIds.has(m.id)) state.movements.push(m); });
+      localStorage.setItem('movements', JSON.stringify(state.movements));
+    }
+
+    // If any local-only workouts exist, push them up
+    if (wSnap.exists) {
+      const cloudIds = new Set((wSnap.data().workouts || []).map(w => w.id));
+      if (state.workouts.some(w => !cloudIds.has(w.id))) await cloudSave();
+    }
+
+    // Bodyweight
+    const bwSnap = await userDoc('bodyweight').get().catch(()=>null);
+    if (bwSnap?.exists) {
+      const cloudBW = bwSnap.data().entries || [];
+      const localDates = new Set((state.bodyweight||[]).map(e=>e.date));
+      cloudBW.forEach(e => { if (!localDates.has(e.date)) { state.bodyweight = state.bodyweight||[]; state.bodyweight.push(e); } });
+      localStorage.setItem('bodyweight', JSON.stringify(state.bodyweight));
+    }
+
+    renderHistory();
+    renderLibrary();
+    setSyncUI('signedIn', _auth.currentUser);
+    const el = document.getElementById('sync-status-msg');
+    if (el) el.textContent = `✓ Loaded ${state.workouts.length} workouts from cloud`;
+    toast('Data synced from cloud ☁️');
+  } catch(e) {
+    setSyncUI('error');
+    console.error('Cloud load failed:', e);
+    toast('Sync error: ' + (e.message || e.code || e));
+    const el = document.getElementById('sync-status-msg');
+    if (el) el.textContent = '⚠ ' + (e.message || e.code || e);
+  }
+}
+
+async function forcePullFromCloud() {
+  if (!_db || !_uid) return toast('Not signed in');
+  toast('Pulling from cloud…');
+  try {
+    const [wSnap, mSnap, bwSnap] = await Promise.all([
+      userDoc('workouts').get(),
+      userDoc('movements').get(),
+      userDoc('bodyweight').get().catch(() => null),
+    ]);
+    if (wSnap.exists) { state.workouts = wSnap.data().workouts || []; localStorage.setItem('workouts', JSON.stringify(state.workouts)); }
+    if (mSnap.exists) {
+      const cloudCustom = mSnap.data().movements || [];
+      state.movements = state.movements.filter(m => !m.id.startsWith('custom-'));
+      state.movements.push(...cloudCustom);
+      localStorage.setItem('movements', JSON.stringify(state.movements));
+    }
+    if (bwSnap?.exists) {
+      state.bodyweight = bwSnap.data().entries || [];
+      localStorage.setItem('bodyweight', JSON.stringify(state.bodyweight));
+    }
+    renderHistory(); renderLibrary();
+    setSyncUI('signedIn', _auth.currentUser);
+    const bwCount = state.bodyweight?.length || 0;
+    toast(`Pulled from cloud ✓ — ${bwCount} weight entries`);
+  } catch(e) { toast('Pull failed: ' + e.message); }
+}
+
+async function forcePushToCloud() {
+  if (!_db || !_uid) return toast('Not signed in');
+  toast('Pushing to cloud…');
+  await cloudSave();
+  toast('Pushed to cloud ✓');
+}
+
+// ── Hardcoded config — auto-connects on any device ───────────────────────
+const BOBWOD_CONFIG = {
+  apiKey: "AIzaSyC6XUJjezoDR6DqD_X9Qnq4nhP01XjCCbE",
+  authDomain: "bobwod-ab60a.firebaseapp.com",
+  projectId: "bobwod-ab60a",
+  storageBucket: "bobwod-ab60a.firebasestorage.app",
+  messagingSenderId: "560307104233",
+  appId: "1:560307104233:web:32a0b9dc8ddf0563ec0378",
+  measurementId: "G-DMWC3Q4ERT"
+};
+
+(function autoInitFirebase() {
+  setSyncUI('signin'); // show sign-in panel immediately while Firebase loads
+  const cfg = storedConfig() || BOBWOD_CONFIG;
+  setTimeout(() => initFirebase(cfg), 300);
+})();
+
+// ══════════════════════════════════════════════════════════════════ BODYWEIGHT
+
+// Historical data to pre-load on first run
+const BW_HISTORICAL = [
+  ['2017-10-22',183.0],['2017-10-23',182.0],['2022-08-01',217.0],['2022-09-27',200.0],
+  ['2023-07-24',225.0],['2023-08-02',215.0],['2023-12-29',232.0],['2024-01-05',230.0],
+  ['2024-01-12',232.0],['2024-03-01',229.0],['2024-03-08',232.0],['2024-03-15',228.0],
+  ['2024-03-20',227.0],['2024-03-22',226.2],['2024-03-29',225.8],['2024-04-02',225.4],
+  ['2024-04-03',223.8],['2024-04-04',224.0],['2024-04-05',223.8],['2024-04-06',222.6],
+  ['2024-04-08',224.8],['2024-04-09',223.4],['2024-04-10',222.2],['2024-04-11',221.0],
+  ['2024-04-12',220.6],['2024-04-13',219.4],['2024-04-15',223.6],['2024-04-16',222.8],
+  ['2024-04-17',221.0],['2024-04-23',227.0],['2024-04-24',225.4],['2024-04-25',223.8],
+  ['2024-04-26',222.8],['2024-04-30',221.2],['2024-05-01',222.2],['2024-05-02',220.4],
+  ['2024-05-03',219.2],['2024-05-04',218.6],['2024-05-06',221.0],['2024-05-07',219.0],
+  ['2024-05-08',220.0],['2024-05-09',218.4],['2024-05-10',218.4],['2024-05-11',215.6],
+  ['2024-05-13',218.6],['2024-05-14',218.6],['2024-05-15',217.0],['2024-05-16',216.4],
+  ['2024-05-17',217.0],['2024-05-21',219.0],['2024-05-22',216.4],['2024-05-23',216.4],
+  ['2024-05-24',216.2],['2024-05-25',215.0],['2024-05-26',215.2],['2024-05-28',217.8],
+  ['2024-05-29',215.8],['2024-05-30',213.6],['2024-05-31',213.6],['2024-06-02',216.0],
+  ['2024-06-03',214.2],['2024-06-04',214.2],['2024-06-05',212.6],['2024-06-06',211.6],
+  ['2024-06-07',210.6],['2024-06-08',209.2],['2024-06-09',212.8],['2024-06-10',214.8],
+  ['2024-06-11',214.6],['2024-06-12',212.4],['2024-06-14',209.5],['2024-06-21',206.8],
+  ['2024-06-25',211.0],['2024-06-26',209.4],['2024-06-27',208.3],['2024-06-28',207.0],
+  ['2024-07-01',211.2],['2024-07-02',209.2],['2024-07-03',207.4],['2024-07-04',206.4],
+  ['2024-07-05',207.0],['2024-07-06',205.6],['2024-07-07',205.6],['2024-07-10',205.0],
+  ['2024-07-11',205.0],['2024-07-12',203.8],['2024-07-13',203.8],['2024-07-15',206.6],
+  ['2024-07-16',205.6],['2024-07-17',203.8],['2024-07-19',203.2],['2024-07-20',200.8],
+  ['2024-07-22',202.8],['2024-07-23',202.6],['2024-07-24',200.8],['2024-07-25',200.2],
+  ['2024-07-26',199.6],['2024-07-31',202.4],['2024-08-02',201.8],['2024-08-05',204.4],
+  ['2024-08-06',202.6],['2024-08-07',201.8],['2024-08-08',201.2],['2024-08-10',200.4],
+  ['2024-08-12',200.4],['2024-08-13',200.8],['2024-08-14',198.6],['2024-08-15',198.0],
+  ['2024-08-16',196.6],['2024-08-19',200.4],['2024-08-20',199.6],['2024-08-21',197.0],
+  ['2024-08-22',196.6],['2024-08-23',196.2],['2024-08-24',194.8],['2024-08-26',198.6],
+  ['2024-08-27',198.2],['2024-08-28',196.4],['2024-08-29',196.2],['2024-08-30',195.8],
+  ['2024-08-31',193.6],['2024-09-01',195.6],['2024-09-02',197.0],['2024-09-03',196.6],
+  ['2024-09-04',195.4],['2024-09-05',193.8],['2024-09-06',193.8],['2024-09-07',193.0],
+  ['2024-09-08',193.2],['2024-09-09',194.8],['2024-09-10',194.8],['2024-09-11',194.0],
+  ['2024-09-12',192.2],['2024-09-13',191.4],['2024-09-16',193.4],['2024-09-17',192.0],
+  ['2024-09-18',190.2],['2024-09-19',192.3],['2024-09-20',190.2],['2024-09-21',189.8],
+  ['2024-09-22',192.2],['2024-09-23',191.4],['2024-09-24',192.2],['2024-09-25',189.8],
+  ['2024-09-26',190.2],['2024-09-27',189.4],['2024-09-28',187.5],['2024-09-30',190.6],
+  ['2024-10-01',189.0],['2024-10-02',189.0],['2024-10-04',187.6],['2024-10-05',186.6],
+  ['2024-10-06',187.0],['2024-10-07',189.4],['2024-10-08',190.0],['2024-10-09',188.8],
+  ['2024-10-10',188.0],['2024-10-11',188.0],['2024-10-12',187.0],['2024-10-14',189.0],
+  ['2024-10-15',186.8],['2024-10-16',187.0],['2024-10-17',189.0],['2024-10-18',187.4],
+  ['2024-10-19',188.8],['2024-10-20',188.0],['2024-10-21',190.6],['2024-10-23',187.8],
+  ['2024-10-24',188.0],['2024-10-25',188.4],['2024-10-26',186.2],['2024-10-27',187.0],
+  ['2024-10-28',188.0],['2024-10-29',187.8],['2024-10-30',188.0],['2024-10-31',188.0],
+  ['2024-11-02',186.6],['2024-11-04',189.6],['2024-11-05',187.0],['2024-11-07',188.4],
+  ['2024-11-12',189.8],['2024-11-13',189.8],['2024-11-15',189.0],['2024-11-16',187.4],
+  ['2024-11-21',191.0],['2024-11-22',189.6],['2024-11-27',189.2],['2024-12-27',191.0],
+  ['2025-01-02',192.2],['2025-01-27',193.8],['2025-01-31',191.8],['2025-02-24',195.4],
+  ['2025-02-25',194.6],['2025-02-26',193.0],['2025-02-27',193.6],['2025-02-28',195.2],
+  ['2025-03-03',193.0],['2025-03-04',193.4],['2025-03-05',195.2],['2025-03-06',194.4],
+  ['2025-03-07',193.8],['2025-03-10',196.4],['2025-03-11',196.8],['2025-03-12',197.0],
+  ['2025-03-14',198.0],['2025-03-15',196.5],['2025-03-16',196.6],['2025-03-17',198.2],
+  ['2025-03-18',195.6],['2025-03-19',195.4],['2025-03-20',194.6],['2025-03-21',195.5],
+  ['2025-03-22',195.4],['2025-03-23',195.2],['2025-03-24',195.6],['2025-03-25',197.0],
+  ['2025-04-03',195.8],['2025-04-08',198.0],['2025-04-21',201.2],['2025-04-22',199.0],
+  ['2025-04-23',198.2],['2025-04-24',197.8],['2025-04-25',200.0],['2025-05-08',199.2],
+  ['2025-05-31',197.0],['2025-07-07',206.0],['2025-07-08',204.4],['2025-07-09',202.6],
+  ['2025-07-10',202.2],['2025-07-11',202.4],['2025-07-12',200.6],['2025-07-14',206.4],
+  ['2025-07-15',203.4],['2025-07-16',202.6],['2025-07-17',200.6],['2025-07-18',200.4],
+  ['2025-07-19',200.2],['2025-07-20',204.0],['2025-07-21',206.0],['2025-07-22',204.2],
+  ['2025-07-23',202.4],['2025-07-24',201.2],['2025-07-25',201.0],['2025-08-25',206.2],
+  ['2025-08-26',204.8],['2025-08-27',203.0],['2025-08-28',201.8],['2025-08-29',202.4],
+  ['2025-08-30',200.0],['2025-08-31',201.6],['2025-09-02',206.0],['2025-09-03',204.6],
+  ['2025-09-06',203.4],['2025-09-07',204.2],['2025-09-09',203.4],['2025-09-11',202.8],
+  ['2025-09-12',203.0],['2025-09-15',203.4],['2025-09-23',206.0],['2025-09-24',204.8],
+  ['2025-09-25',202.0],['2025-09-26',201.6],['2025-11-10',209.2],['2025-11-11',206.2],
+  ['2025-11-12',206.4],['2025-11-13',204.8],['2025-11-14',205.0],['2025-11-16',205.4],
+  ['2025-11-17',210.4],['2025-11-18',207.0],['2025-11-19',206.6],['2025-11-20',205.4],
+  ['2025-11-21',204.6],['2025-11-22',203.4],['2025-11-23',208.4],['2025-11-24',206.6],
+  ['2025-11-25',203.8],['2025-11-26',202.6],['2025-11-27',202.2],['2025-11-28',203.2],
+  ['2025-11-29',200.8],['2025-11-30',201.6],['2025-12-01',204.2],['2025-12-02',203.8],
+  ['2025-12-03',202.4],['2025-12-04',201.0],['2025-12-05',201.6],['2025-12-06',200.0],
+  ['2025-12-07',204.0],['2025-12-11',204.6],['2025-12-12',204.0],['2025-12-13',202.8],
+  ['2025-12-14',204.8],['2025-12-15',207.4],['2025-12-16',204.6],['2025-12-19',204.2],
+  ['2025-12-29',207.6],['2025-12-30',206.8],['2026-01-02',206.0],['2026-01-05',205.4],
+  ['2026-01-09',209.4],['2026-01-12',209.8],['2026-01-15',206.4],['2026-01-16',206.2],
+  ['2026-01-19',206.8],['2026-01-26',208.6],['2026-02-05',209.8],['2026-02-09',213.4],
+  ['2026-02-10',209.6],['2026-02-11',208.8],['2026-02-12',207.6],['2026-02-13',207.2],
+  ['2026-02-14',207.0],['2026-02-15',208.6],['2026-02-16',209.2],['2026-03-01',207.2],
+  ['2026-03-15',211.0],['2026-03-18',207.0],['2026-03-19',205.2],['2026-03-20',206.6],
+  ['2026-03-21',206.4],['2026-03-23',209.2],['2026-03-26',208.8],['2026-04-02',213.2],
+  ['2026-04-03',210.8],['2026-04-06',210.0],['2026-04-07',207.4],['2026-04-08',207.6],
+  ['2026-04-09',209.4],['2026-04-10',208.4],['2026-04-13',210.0],['2026-04-14',207.2],
+  ['2026-04-16',208.4],['2026-04-17',207.2],['2026-04-18',206.2],['2026-04-20',211.2],
+  ['2026-04-22',208.8],['2026-04-23',207.4],['2026-04-24',207.8],['2026-04-25',204.6],
+  ['2026-04-27',211.4],['2026-04-28',207.6],['2026-04-29',209.4],['2026-04-30',209.0],
+  ['2026-05-01',206.0],['2026-05-02',205.9],['2026-05-04',210.4],['2026-05-05',208.4],
+  ['2026-05-06',207.2],['2026-05-07',205.6],['2026-05-08',204.2],['2026-05-09',204.4],
+  ['2026-05-11',207.0],['2026-05-12',206.0],['2026-05-13',202.8],['2026-05-14',204.4],
+  ['2026-05-15',202.0],['2026-05-16',198.8],['2026-05-18',207.2],['2026-05-19',203.2],
+  ['2026-05-20',204.0],['2026-05-21',204.4],['2026-05-22',202.8],['2026-05-23',202.0],
+  ['2026-05-25',203.2],['2026-05-27',206.8],['2026-05-28',208.2],['2026-05-29',205.0],
+  ['2026-05-30',204.0],['2026-05-31',206.8],['2026-06-01',206.6],['2026-06-02',203.8],
+];
+
+var bwRange = 90;
+
+function initBodyweight() {
+  // Pre-load historical data on first run (skip duplicates by date)
+  if (!state.bodyweight || !state.bodyweight.length) {
+    state.bodyweight = BW_HISTORICAL.map(([date, weight]) => ({ date, weight, unit: 'lbs', note: '' }));
+    localStorage.setItem('bodyweight', JSON.stringify(state.bodyweight));
+  }
+  document.getElementById('bw-date').value = new Date().toISOString().split('T')[0];
+  renderBodyweight();
+}
+
+function renderBodyweight() {
+  if (!state.bodyweight) initBodyweight();
+  const all = (state.bodyweight || []).slice().sort((a,b) => a.date.localeCompare(b.date));
+  if (!all.length) return;
+
+  // Filter by range
+  const now = new Date();
+  const cutoff = bwRange ? new Date(now.getTime() - bwRange * 86400000).toISOString().split('T')[0] : '1970-01-01';
+  const data = bwRange ? all.filter(e => e.date >= cutoff) : all;
+
+  renderBWStats(all, data);
+  renderBWChart(data);
+  renderBWHistory(all);
+}
+
+function renderBWStats(all, rangeData) {
+  const latest = all[all.length - 1];
+  const allWeights = all.map(e => e.weight);
+  const allTimeMin = Math.min(...allWeights);
+  const allTimeMax = Math.max(...allWeights);
+
+  // 7-day avg
+  const cutoff7 = new Date(Date.now() - 7*86400000).toISOString().split('T')[0];
+  const last7 = all.filter(e => e.date >= cutoff7);
+  const avg7 = last7.length ? (last7.reduce((s,e)=>s+e.weight,0)/last7.length).toFixed(1) : '—';
+
+  // Change over range
+  const first = rangeData[0], last = rangeData[rangeData.length-1];
+  const change = first && last && rangeData.length > 1 ? (last.weight - first.weight).toFixed(1) : null;
+  const changeStr = change !== null ? (change > 0 ? `+${change}` : change) : '—';
+  const changeColor = change < 0 ? 'var(--green)' : change > 0 ? '#e74c3c' : 'var(--text2)';
+
+  document.getElementById('bw-stats').innerHTML = [
+    { label: 'Current',    value: latest ? `${latest.weight}` : '—',    sub: latest?.unit||'lbs' },
+    { label: '7-Day Avg',  value: avg7,    sub: 'lbs' },
+    { label: 'Range Change', value: changeStr, sub: 'lbs', color: changeColor },
+    { label: 'All-Time Low', value: allTimeMin, sub: 'lbs' },
+  ].map(s => `<div class="stat-card">
+    <div class="stat-value" style="font-size:1.5rem;${s.color?`color:${s.color}`:''};">${s.value}</div>
+    <div class="stat-label">${s.label}<br><span style="font-size:.7rem;">${s.sub}</span></div>
+  </div>`).join('');
+}
+
+var _bwPts = []; // stored for scrub handler
+
+function renderBWChart(data) {
+  if (data.length < 2) { document.getElementById('bw-chart').innerHTML = '<div class="empty" style="padding:20px 0;">Not enough data in this range.</div>'; return; }
+
+  const W = document.getElementById('bw-chart').offsetWidth || 340;
+  const H = 200, pad = { t:16, r:16, b:28, l:44 };
+  const iW = W - pad.l - pad.r, iH = H - pad.t - pad.b;
+
+  const dates   = data.map(e => new Date(e.date+'T00:00:00').getTime());
+  const weights = data.map(e => e.weight);
+  const minD = Math.min(...dates), maxD = Math.max(...dates);
+  const minW = Math.min(...weights) - 1, maxW = Math.max(...weights) + 1;
+
+  const xS = d => pad.l + (d - minD) / (maxD - minD) * iW;
+  const yS = w => pad.t + (1 - (w - minW) / (maxW - minW)) * iH;
+
+  function rollingAvg(pts, days) {
+    return pts.map(p => {
+      const cutoff = p.d - days*86400000;
+      const win = pts.filter(q => q.d >= cutoff && q.d <= p.d);
+      return { d: p.d, w: win.reduce((s,q)=>s+q.w,0)/win.length };
+    });
+  }
+  const pts = data.map(e => ({ d: new Date(e.date+'T00:00:00').getTime(), w: e.weight }));
+  const avg = rollingAvg(pts, 7);
+
+  // Store with pixel coords for scrubbing
+  _bwPts = pts.map(p => ({ d: p.d, w: p.w, x: xS(p.d), y: yS(p.w) }));
+
+  const linePath = pts.map((p,i) => `${i?'L':'M'}${xS(p.d).toFixed(1)},${yS(p.w).toFixed(1)}`).join('');
+  const avgPath  = avg.map((p,i) => `${i?'L':'M'}${xS(p.d).toFixed(1)},${yS(p.w).toFixed(1)}`).join('');
+
+  const yStep = iH/4;
+  let grid = '', yLabels = '';
+  for (let i=0; i<=4; i++) {
+    const y = pad.t + i*yStep;
+    const w = (maxW - i*(maxW-minW)/4).toFixed(0);
+    grid += `<line x1="${pad.l}" y1="${y.toFixed(1)}" x2="${W-pad.r}" y2="${y.toFixed(1)}" stroke="var(--border)" stroke-width="1"/>`;
+    yLabels += `<text x="${pad.l-5}" y="${(y+4).toFixed(1)}" text-anchor="end" fill="var(--text2)" font-size="10">${w}</text>`;
+  }
+
+  let xLabels = '';
+  const labelCount = Math.min(5, data.length);
+  for (let i=0; i<labelCount; i++) {
+    const idx = Math.round(i*(data.length-1)/(labelCount-1));
+    const d = pts[idx].d;
+    xLabels += `<text x="${xS(d).toFixed(1)}" y="${H-4}" text-anchor="middle" fill="var(--text2)" font-size="10">${new Date(d).toLocaleDateString('en-US',{month:'short',day:'numeric'})}</text>`;
+  }
+
+  const lastPt = _bwPts[_bwPts.length-1];
+
+  document.getElementById('bw-chart').innerHTML = `
+    <svg id="bw-svg" viewBox="0 0 ${W} ${H}" width="100%" style="display:block;" xmlns="http://www.w3.org/2000/svg">
+      ${grid}${yLabels}${xLabels}
+      <path d="${linePath}" fill="none" stroke="var(--accent2)" stroke-width="1.5" opacity=".4"/>
+      <path d="${avgPath}"  fill="none" stroke="var(--accent)"  stroke-width="2"/>
+      <circle cx="${lastPt.x.toFixed(1)}" cy="${lastPt.y.toFixed(1)}" r="4" fill="var(--accent)"/>
+      <text x="${(lastPt.x-5).toFixed(1)}" y="${(lastPt.y-8).toFixed(1)}" text-anchor="middle" fill="var(--accent)" font-size="10" font-weight="bold">${lastPt.w}</text>
+      <!-- Scrub elements (hidden until hover/touch) -->
+      <line id="bw-cline" x1="0" y1="${pad.t}" x2="0" y2="${H-pad.b}" stroke="var(--text)" stroke-width="1" stroke-dasharray="4,3" opacity=".4" display="none"/>
+      <circle id="bw-cdot" r="5" fill="var(--accent)" stroke="var(--s1)" stroke-width="2" display="none"/>
+      <rect id="bw-tipbg" rx="5" fill="var(--s2)" stroke="var(--border)" stroke-width="1" display="none"/>
+      <text id="bw-tipw" font-size="12" font-weight="700" fill="var(--text)" display="none"/>
+      <text id="bw-tipd" font-size="10" fill="var(--text2)" display="none"/>
+      <!-- Transparent capture overlay -->
+      <rect x="${pad.l}" y="${pad.t}" width="${iW}" height="${iH}"
+        fill="transparent" style="cursor:crosshair;touch-action:none;"
+        onmousemove="bwScrub(event)" onmouseleave="bwScrubEnd()"
+        ontouchmove="bwScrub(event)" ontouchend="bwScrubEnd()"/>
+    </svg>
+    <div style="display:flex;gap:14px;justify-content:flex-end;font-size:.72rem;color:var(--text2);margin-top:6px;">
+      <span><span style="display:inline-block;width:14px;height:2px;background:var(--accent);vertical-align:middle;margin-right:4px;"></span>7-day avg</span>
+      <span><span style="display:inline-block;width:14px;height:2px;background:var(--accent2);vertical-align:middle;margin-right:4px;opacity:.5;"></span>Daily</span>
+    </div>`;
+}
+
+function bwScrub(e) {
+  if (!_bwPts.length) return;
+  const svg = document.getElementById('bw-svg');
+  if (!svg) return;
+
+  const rect  = svg.getBoundingClientRect();
+  const vbW   = parseFloat(svg.getAttribute('viewBox').split(' ')[2]);
+  const scale = vbW / rect.width;
+  const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+  const vx = (clientX - rect.left) * scale;
+
+  // Nearest point
+  const nearest = _bwPts.reduce((a,b) => Math.abs(a.x-vx) < Math.abs(b.x-vx) ? a : b);
+
+  // Crosshair line
+  const cl = document.getElementById('bw-cline');
+  cl.setAttribute('x1', nearest.x); cl.setAttribute('x2', nearest.x);
+  cl.removeAttribute('display');
+
+  // Dot
+  const cd = document.getElementById('bw-cdot');
+  cd.setAttribute('cx', nearest.x); cd.setAttribute('cy', nearest.y);
+  cd.removeAttribute('display');
+
+  // Tooltip
+  const tipW = 92, tipH = 38, margin = 6;
+  let tx = nearest.x + 10;
+  if (tx + tipW > vbW - 12) tx = nearest.x - tipW - 10;
+  const ty = 14;
+
+  document.getElementById('bw-tipbg').setAttribute('x', tx);
+  document.getElementById('bw-tipbg').setAttribute('y', ty);
+  document.getElementById('bw-tipbg').setAttribute('width', tipW);
+  document.getElementById('bw-tipbg').setAttribute('height', tipH);
+  document.getElementById('bw-tipbg').removeAttribute('display');
+
+  const t1 = document.getElementById('bw-tipw');
+  t1.setAttribute('x', tx + margin); t1.setAttribute('y', ty + 15);
+  t1.textContent = `${nearest.w} lbs`;
+  t1.removeAttribute('display');
+
+  const t2 = document.getElementById('bw-tipd');
+  t2.setAttribute('x', tx + margin); t2.setAttribute('y', ty + 30);
+  t2.textContent = new Date(nearest.d).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+  t2.removeAttribute('display');
+}
+
+function bwScrubEnd() {
+  ['bw-cline','bw-cdot','bw-tipbg','bw-tipw','bw-tipd'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.setAttribute('display','none');
+  });
+}
+
+function renderBWHistory(all) {
+  const reversed = all.slice().reverse();
+  document.getElementById('bw-entry-count').textContent = `${all.length} entries`;
+  document.getElementById('bw-history').innerHTML = reversed.map((e,i) => {
+    const realIdx = all.length - 1 - i;
+    const prev = all[realIdx - 1];
+    const diff = prev ? (e.weight - prev.weight) : null;
+    const diffStr = diff !== null ? `<span style="color:${diff<0?'var(--green)':diff>0?'#e74c3c':'var(--text2)'}; font-size:.75rem;margin-left:6px;">${diff>0?'+':''}${diff.toFixed(1)}</span>` : '';
+    return `<div style="display:flex;justify-content:space-between;align-items:center;padding:9px 16px;border-bottom:1px solid var(--border);">
+      <div>
+        <span style="font-weight:600;">${e.weight} <span style="font-size:.75rem;color:var(--text2);">${e.unit||'lbs'}</span></span>${diffStr}
+        ${e.note ? `<div style="font-size:.75rem;color:var(--text2);">${e.note}</div>` : ''}
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span style="font-size:.78rem;color:var(--text2);">${new Date(e.date+'T00:00:00').toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',year:'numeric'})}</span>
+        <button class="btn btn-danger btn-xs" onclick="deleteBWEntry('${e.date}')">✕</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function setBWRange(days, btn) {
+  bwRange = days;
+  document.querySelectorAll('#body .effort-btn').forEach(b => b.classList.remove('sel'));
+  btn.classList.add('sel');
+  renderBodyweight();
+}
+
+function logWeight() {
+  const w = parseFloat(document.getElementById('bw-weight').value);
+  if (!w || w < 50) return toast('Enter a valid weight');
+  const date = document.getElementById('bw-date').value || new Date().toISOString().split('T')[0];
+  const unit = document.getElementById('bw-unit').value;
+  const note = document.getElementById('bw-note').value.trim();
+
+  if (!state.bodyweight) state.bodyweight = [];
+  // Replace existing entry for same date, or add new
+  const existing = state.bodyweight.findIndex(e => e.date === date);
+  if (existing >= 0) state.bodyweight[existing] = { date, weight: w, unit, note };
+  else state.bodyweight.push({ date, weight: w, unit, note });
+
+  localStorage.setItem('bodyweight', JSON.stringify(state.bodyweight));
+  if (_uid) cloudSaveBW();
+  document.getElementById('bw-weight').value = '';
+  document.getElementById('bw-note').value = '';
+  renderBodyweight();
+  toast(`${w} ${unit} logged ✓`);
+}
+
+function deleteBWEntry(date) {
+  const idx = state.bodyweight.findIndex(e => e.date === date);
+  if (idx >= 0) state.bodyweight.splice(idx, 1);
+  localStorage.setItem('bodyweight', JSON.stringify(state.bodyweight));
+  renderBodyweight();
+}
+
+function importBWcsv(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const lines = e.target.result.split('\n').map(l => l.trim()).filter(Boolean);
+    if (!state.bodyweight) state.bodyweight = [];
+    const existingDates = new Set(state.bodyweight.map(e => e.date));
+    let added = 0;
+    lines.forEach(line => {
+      if (line.startsWith('Date') || line.startsWith('date')) return; // header
+      const [date, weight] = line.split(',');
+      if (!date || !weight) return;
+      const d = date.trim(), w = parseFloat(weight.trim());
+      if (!d || isNaN(w)) return;
+      if (!existingDates.has(d)) {
+        state.bodyweight.push({ date: d, weight: w, unit: 'lbs', note: '' });
+        existingDates.add(d);
+        added++;
+      }
+    });
+    localStorage.setItem('bodyweight', JSON.stringify(state.bodyweight));
+    if (_uid) cloudSaveBW();
+    renderBodyweight();
+    toast(`Imported ${added} entries`);
+  };
+  reader.readAsText(file);
+  input.value = '';
+}
+
+async function cloudSaveBW() {
+  if (!_db || !_uid) return;
+  try { await userDoc('bodyweight').set({ entries: state.bodyweight, updatedAt: Date.now() }); }
+  catch(e) { console.error('BW cloud save failed:', e); }
+}
+
+// ══════════════════════════════════════════════════════════════════ CALENDAR
+
+var calYear = new Date().getFullYear();
+var calMonth = new Date().getMonth(); // 0-based
+var calSelectedDay = null;
+
+function calNav(dir) {
+  calMonth += dir;
+  if (calMonth > 11) { calMonth = 0; calYear++; }
+  if (calMonth < 0)  { calMonth = 11; calYear--; }
+  calSelectedDay = null;
+  renderCalendar();
+}
+
+function renderCalendar() {
+  const today = new Date();
+  const monthStart = new Date(calYear, calMonth, 1);
+  const monthEnd   = new Date(calYear, calMonth + 1, 0);
+  const startDow   = monthStart.getDay(); // 0=Sun
+
+  document.getElementById('cal-label').textContent =
+    monthStart.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+
+  // Build a set of date strings that have workouts
+  const wodDays = {};
+  state.workouts.forEach((w, wi) => {
+    if (!w.date) return;
+    const d = new Date(w.date + 'T00:00:00');
+    if (d.getFullYear() === calYear && d.getMonth() === calMonth) {
+      const key = w.date;
+      if (!wodDays[key]) wodDays[key] = [];
+      wodDays[key].push(wi);
+    }
+  });
+
+  const dows = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  let html = dows.map(d => `<div class="cal-dow">${d}</div>`).join('');
+
+  // Empty cells before month start
+  for (let i = 0; i < startDow; i++) html += `<div class="cal-day empty"></div>`;
+
+  for (let day = 1; day <= monthEnd.getDate(); day++) {
+    const dateStr = `${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+    const isToday = today.getFullYear()===calYear && today.getMonth()===calMonth && today.getDate()===day;
+    const hasDots = wodDays[dateStr] || [];
+    const isSel   = calSelectedDay === dateStr;
+    const cls     = ['cal-day', hasDots.length?'has-wod':'', isToday?'today':'', isSel?'selected':''].filter(Boolean).join(' ');
+    html += `<div class="${cls}" onclick="selectCalDay('${dateStr}')">
+      <span class="cal-dn">${day}</span>
+      <div class="cal-dots">${hasDots.slice(0,3).map(()=>'<span class="cal-dot"></span>').join('')}</div>
+    </div>`;
+  }
+
+  document.getElementById('cal-grid').innerHTML = html;
+
+  // Render selected day workouts
+  const dayEl = document.getElementById('cal-day-workouts');
+  if (calSelectedDay && wodDays[calSelectedDay]) {
+    const wis = wodDays[calSelectedDay];
+    const label = new Date(calSelectedDay + 'T00:00:00').toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
+    dayEl.innerHTML = `<div style="font-weight:700;margin-bottom:10px;">${label}</div>` +
+      wis.map(wi => {
+        const w = state.workouts[wi];
+        return `<div class="wod-entry" onclick="openWodDetail(${wi})">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+            <strong>${w.name || w.type || 'Workout'}</strong>
+            <span class="badge b-cf">${w.type}</span>
+          </div>
+          <div class="wod-meta">
+            ${w.scoreValue ? `<span style="color:var(--green);font-weight:700;">${w.scoreValue} </span>` : ''}${w.effort ? `⚡ ${w.effort} · ` : ''}${w.movements.length} movement${w.movements.length!==1?'s':''}${w.duration?` · ${w.duration}`:''}
+          </div>
+          <div class="tag-row">${w.movements.map(m=>`<span class="badge ${catBadge(m.cat)}">${m.name}</span>`).join('')}</div>
+        </div>`;
+      }).join('');
+  } else if (calSelectedDay) {
+    dayEl.innerHTML = `<div class="empty" style="padding:20px 0;"><div class="icon">🗓</div><div>No workouts on this day.</div></div>`;
+  } else {
+    dayEl.innerHTML = '';
+  }
+}
+
+function selectCalDay(dateStr) {
+  calSelectedDay = calSelectedDay === dateStr ? null : dateStr;
+  renderCalendar();
+}
+
+// ══════════════════════════════════════════════════════════════════ EXPORT / IMPORT
+
+function exportData() {
+  const customMovements = state.movements.filter(m => m.id && m.id.startsWith('custom-'));
+  const payload = {
+    exportedAt: new Date().toISOString(),
+    version: 1,
+    workouts: state.workouts,
+    customMovements,
+    bodyweight: state.bodyweight || [],
+  };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `bobwod-export-${new Date().toISOString().split('T')[0]}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+  toast('Exported ✓');
+}
+
+function importData(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const data = JSON.parse(e.target.result);
+      let addedWorkouts = 0, addedMovements = 0;
+
+      // Merge workouts — skip any whose id already exists
+      if (Array.isArray(data.workouts)) {
+        const existingIds = new Set(state.workouts.map(w => w.id));
+        data.workouts.forEach(w => {
+          if (!existingIds.has(w.id)) {
+            state.workouts.push(w);
+            addedWorkouts++;
+          }
+        });
+        // Sort by date descending
+        state.workouts.sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+      }
+
+      // Merge custom movements — skip duplicates by id
+      const movementsToMerge = data.customMovements || data.movements?.filter(m => m.id?.startsWith('custom-')) || [];
+      if (movementsToMerge.length) {
+        const existingIds = new Set(state.movements.map(m => m.id));
+        movementsToMerge.forEach(m => {
+          if (!existingIds.has(m.id)) {
+            state.movements.push(m);
+            addedMovements++;
+          }
+        });
+      }
+
+      // Merge bodyweight entries
+      let addedBW = 0;
+      if (Array.isArray(data.bodyweight) && data.bodyweight.length) {
+        if (!state.bodyweight) state.bodyweight = [];
+        const bwDates = new Set(state.bodyweight.map(e => e.date));
+        data.bodyweight.forEach(e => { if (e.date && !bwDates.has(e.date)) { state.bodyweight.push(e); addedBW++; } });
+        localStorage.setItem('bodyweight', JSON.stringify(state.bodyweight));
+      }
+
+      save();
+      renderHistory();
+      renderLibrary();
+      toast(`Imported: ${addedWorkouts} workout${addedWorkouts!==1?'s':''}, ${addedMovements} movement${addedMovements!==1?'s':''}${addedBW?`, ${addedBW} weight entries`:''}`);
+      // If signed in, push the merged data to cloud
+      if (_uid) cloudSave();
+    } catch(err) {
+      toast('Import failed: ' + err.message);
+    }
+    input.value = ''; // reset so same file can be re-selected
+  };
+  reader.readAsText(file);
+}
+
+function formatDate(d) {
+  if (!d) return '';
+  const dt = new Date(d + 'T00:00:00');
+  return dt.toLocaleDateString('en-US', { weekday:'short', month:'short', day:'numeric', year:'numeric' });
+}
+
+function toast(msg) {
+  const t = document.createElement('div');
+  t.className = 'toast'; t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 2800);
+}
+</script>
+</body>
+</html>
