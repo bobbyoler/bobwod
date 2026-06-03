@@ -1928,8 +1928,8 @@ function parseOneLine(line) {
 
   // Extract weight: patterns like 95#, 95 lbs, 95lb, 95kg, @95, @ 95#
   let weight = '', weightUnit = 'lbs';
-  const wMatch = text.match(/[@\s](\d+(?:\.\d+)?)\s*(#|lbs?|kg)\b/i)
-               || text.match(/\b(\d+(?:\.\d+)?)\s*(#|lbs?|kg)\b/i);
+  const wMatch = text.match(/[@\s](\d+(?:\.\d+)?)\s*(#|lbs?|kg)(?!\w)/i)
+               || text.match(/\b(\d+(?:\.\d+)?)\s*(#|lbs?|kg)(?!\w)/i);
   if (wMatch) {
     weight = wMatch[1];
     weightUnit = wMatch[2].toLowerCase() === 'kg' ? 'kg' : 'lbs';
