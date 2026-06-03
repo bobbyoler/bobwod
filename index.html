@@ -877,8 +877,9 @@ document.querySelectorAll('.overlay').forEach(o => {
 (function init() {
   // set today's date
   document.getElementById('wod-date').value = new Date().toISOString().split('T')[0];
-  // Register any aliases on custom movements saved from previous sessions
-  registerCustomAliases();
+  // Register any aliases on custom movements saved from previous sessions.
+  // Deferred so const ALIASES / MOD_HINTS are initialized before this runs.
+  setTimeout(registerCustomAliases, 0);
   // custom modifier field visibility
   document.getElementById('c-fields').addEventListener('change', () => {
     const hasModifier = [...document.querySelectorAll('#c-fields input:checked')].some(i => i.value === 'modifier');
