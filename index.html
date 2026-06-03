@@ -194,6 +194,9 @@ details.more-opts .more-body{padding-top:10px;}
   .effort-row{grid-template-columns:repeat(5,1fr);}
   .mv-grid{grid-template-columns:1fr;}
   h2{font-size:1.2rem;}
+  /* Move Detect Movements button above textarea so it stays above the keyboard */
+  .wod-metcon-card{display:flex;flex-direction:column;}
+  .wod-metcon-btns{order:-1;margin-bottom:10px;margin-top:0!important;}
 }
 </style>
 <!-- Firebase 9 compat SDKs -->
@@ -252,7 +255,7 @@ details.more-opts .more-body{padding-top:10px;}
   </div>
 
   <!-- Inline Metcon Builder -->
-  <div class="card" style="margin-bottom:14px;">
+  <div class="card wod-metcon-card" style="margin-bottom:14px;">
     <label style="margin-bottom:8px;">Workout / Metcon</label>
     <textarea id="wod-metcon" rows="6" autocorrect="off" autocapitalize="none" spellcheck="false" placeholder="Type your workout here and tap Detect Movements…
 
@@ -261,7 +264,7 @@ Fran: 21-15-9 Thrusters 95# Kipping Pull-ups
 AMRAP 20: 5 Bar Muscle-Ups, 10 HSPU, 15 C2B
 3 RFT: 400m Run, 21 KB Swings 53#, 12 Pull-ups
 5x5 Back Squat @ 225#" style="margin-bottom:10px;"></textarea>
-    <div style="display:flex;gap:8px;">
+    <div class="wod-metcon-btns" style="display:flex;gap:8px;margin-top:10px;">
       <button class="btn btn-primary" style="flex:1;" onclick="detectMovementsInline()">🔍 Detect Movements</button>
       <button class="btn btn-ghost" onclick="openPickMovement()">+ Add Manually</button>
     </div>
