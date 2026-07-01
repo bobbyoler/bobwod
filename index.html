@@ -560,7 +560,8 @@ AMRAP 20: 5 Bar Muscle-Ups, 10 HSPU, 15 C2B
   <div class="modal" style="max-width:600px;">
     <div class="mhead"><h3 id="wd-title"></h3><button class="mclose" onclick="closeModal('m-wod-detail')">✕</button></div>
     <div id="wd-body"></div>
-    <div style="display:flex;gap:8px;margin-top:16px;">
+    <div style="display:flex;gap:8px;margin-top:16px;flex-wrap:wrap;">
+      <button class="btn btn-secondary btn-sm" onclick="copyWorkoutToLog()">📋 Copy to Log</button>
       <button class="btn btn-ghost btn-sm" onclick="openEditWorkout()">✏ Edit Workout</button>
       <button class="btn btn-danger btn-sm" onclick="deleteWorkout()">Delete</button>
     </div>
@@ -1362,6 +1363,50 @@ function deleteWorkout() {
   closeModal('m-wod-detail');
   renderHistory();
   toast('Workout deleted.');
+}
+
+function copyWorkoutToLog() {
+  const w = state.workouts[state.detailWodIdx];
+  if (!w) return;
+
+  // Copy movements into the active log, keeping weights/reps as reference but
+  // resetting "done" so the user logs fresh numbers.
+  state.currentMvs = w.movements.map(mv => ({
+    mvId:   mv.mvId,
+    name:   mv.name,
+    cat:    mv.cat,
+    fields: mv.fields  || [],
+    mods:   mv.mods    || [],
+    notes:  mv.notes   || '',
+    sets: (mv.sets || []).map(s => ({ ...s, done: false })),
+  }));
+
+  // Pre-fill workout metadata
+  document.getElementById('wod-name').value    = w.name    || '';
+  document.getElementById('wod-type').value    = w.type    || 'WOD';
+  document.getElementById('wod-metcon').value  = w.rawWod  || '';
+  document.getElementById('score-type').value  = w.scoreType  || '';
+  document.getElementById('score-value').value = '';          // score is earned fresh
+  document.getElementById('wod-date').value    = new Date().toISOString().split('T')[0]; // today
+
+  // Reset effort selection
+  state.currentEffort = '';
+  document.querySelectorAll('.effort-btn').forEach(b => b.classList.remove('sel'));
+
+  closeModal('m-wod-detail');
+
+  // Switch to Log tab
+  const logBtn = document.querySelector('.nb[data-sec="log"]');
+  if (logBtn) nav(logBtn, 'log'); else {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.getElementById('log').classList.add('active');
+    document.querySelectorAll('.bnb[data-sec]').forEach(b =>
+      b.classList.toggle('active', b.dataset.sec === 'log'));
+  }
+
+  renderLog();
+  window.scrollTo(0, 0);
+  toast(`Copied "${w.name || w.type}" — adjust and save when ready`);
 }
 
 // ══════════════════════════════════════════════════════════════════ MOVEMENT HISTORY
