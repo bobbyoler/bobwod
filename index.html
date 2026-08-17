@@ -399,12 +399,22 @@ AMRAP 20: 5 Bar Muscle-Ups, 10 HSPU, 15 C2B
 <!-- ═══════════════════════════════════════════════════════════ BODY -->
 <div id="body" class="section">
   <div class="sec-head">
-    <h2>Body Weight</h2>
-    <div style="display:flex;gap:8px;">
-      <button class="btn btn-ghost btn-sm" onclick="document.getElementById('bw-import-file').click()">⬆ Import CSV</button>
+    <h2>Body</h2>
+    <div id="body-header-actions" style="display:flex;gap:8px;">
+      <button class="btn btn-ghost btn-sm" id="bw-import-btn" onclick="document.getElementById('bw-import-file').click()">⬆ Import CSV</button>
       <input type="file" id="bw-import-file" accept=".csv" style="display:none;" onchange="importBWcsv(this)">
+      <button class="btn btn-ghost btn-sm hidden" id="bp-export-btn" onclick="exportBPcsv()">⬇ Export CSV</button>
     </div>
   </div>
+
+  <!-- Body section tabs -->
+  <div class="tabs">
+    <button class="tab active" onclick="switchBodyTab(this,'body-weight-tab')">⚖️ Weight</button>
+    <button class="tab" onclick="switchBodyTab(this,'body-bp-tab')">🩺 Blood Pressure</button>
+  </div>
+
+  <!-- ── Weight tab ──────────────────────────────────────────────── -->
+  <div id="body-weight-tab">
 
   <!-- Log today -->
   <div class="card" style="margin-bottom:16px;">
@@ -458,7 +468,60 @@ AMRAP 20: 5 Bar Muscle-Ups, 10 HSPU, 15 C2B
     </div>
     <div id="bw-history" style="max-height:320px;overflow-y:auto;"></div>
   </div>
-</div>
+
+  </div><!-- end body-weight-tab -->
+
+  <!-- ── Blood Pressure tab ──────────────────────────────────────── -->
+  <div id="body-bp-tab" class="hidden">
+
+    <!-- Log form -->
+    <div class="card" style="margin-bottom:16px;">
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px;">
+        <div class="fg" style="margin-bottom:0;">
+          <label>Systolic <span style="font-weight:400;opacity:.5;">mmHg</span></label>
+          <input type="number" id="bp-sys" placeholder="120" min="60" max="250">
+        </div>
+        <div class="fg" style="margin-bottom:0;">
+          <label>Diastolic <span style="font-weight:400;opacity:.5;">mmHg</span></label>
+          <input type="number" id="bp-dia" placeholder="80" min="40" max="150">
+        </div>
+        <div class="fg" style="margin-bottom:0;">
+          <label>Pulse <span style="font-weight:400;opacity:.5;">bpm</span></label>
+          <input type="number" id="bp-pulse" placeholder="60" min="30" max="220">
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;">
+        <div class="fg" style="margin-bottom:0;">
+          <label>Date</label>
+          <input type="date" id="bp-date">
+        </div>
+        <div class="fg" style="margin-bottom:0;">
+          <label>Time <span style="font-weight:400;opacity:.5;">(optional)</span></label>
+          <input type="time" id="bp-time">
+        </div>
+      </div>
+      <div class="fg" style="margin-bottom:10px;">
+        <label>Notes <span style="font-weight:400;opacity:.5;">(optional)</span></label>
+        <input type="text" id="bp-note" placeholder="e.g. after exercise, fasted, left arm…">
+      </div>
+      <button class="btn btn-primary" style="width:100%;" onclick="logBP()">Save Reading</button>
+    </div>
+
+    <!-- Stats row -->
+    <div id="bp-stats" style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px;"></div>
+
+    <!-- History -->
+    <div class="card" style="padding:0;">
+      <div style="padding:14px 16px 10px;display:flex;justify-content:space-between;align-items:center;">
+        <strong style="font-size:.9rem;">History</strong>
+        <span id="bp-entry-count" style="font-size:.8rem;color:var(--text2);"></span>
+      </div>
+      <div id="bp-history" style="max-height:400px;overflow-y:auto;"></div>
+    </div>
+
+  </div><!-- end body-bp-tab -->
+
+</div><!-- end body section -->
 
 </main>
 
@@ -813,6 +876,7 @@ let state = {
   movements: JSON.parse(localStorage.getItem('movements') || 'null') || [...MOVEMENT_DB],
   workouts: JSON.parse(localStorage.getItem('workouts') || '[]'),
   bodyweight: JSON.parse(localStorage.getItem('bodyweight') || 'null'),
+  bloodpressure: JSON.parse(localStorage.getItem('bloodpressure') || '[]'),
   // current workout in progress
   currentMvs: [],           // [{mvId, name, cat, fields, mods, sets:[{...}], notes}]
   currentEffort: '',
@@ -839,7 +903,7 @@ function nav(btn, sec) {
   document.getElementById(sec).classList.add('active');
   if (sec === 'history') renderHistory();
   if (sec === 'movements') renderLibrary();
-  if (sec === 'body') setTimeout(renderBodyweight, 0);
+  if (sec === 'body') { setTimeout(renderBodyweight, 0); if (!document.getElementById('body-bp-tab').classList.contains('hidden')) renderBP(); }
 }
 
 function navMobile(btn, sec) {
@@ -851,7 +915,7 @@ function navMobile(btn, sec) {
   window.scrollTo(0, 0);
   if (sec === 'history') renderHistory();
   if (sec === 'movements') renderLibrary();
-  if (sec === 'body') setTimeout(renderBodyweight, 0);
+  if (sec === 'body') { setTimeout(renderBodyweight, 0); if (!document.getElementById('body-bp-tab').classList.contains('hidden')) renderBP(); }
 }
 
 function switchTab(btn, tabId) {
@@ -877,7 +941,10 @@ document.querySelectorAll('.overlay').forEach(o => {
 
 (function init() {
   // set today's date
-  document.getElementById('wod-date').value = new Date().toISOString().split('T')[0];
+  const todayStr = new Date().toISOString().split('T')[0];
+  document.getElementById('wod-date').value = todayStr;
+  document.getElementById('bp-date').value  = todayStr;
+  document.getElementById('bw-date').value  = todayStr;
   // Register any aliases on custom movements saved from previous sessions.
   // Deferred so const ALIASES / MOD_HINTS are initialized before this runs.
   setTimeout(registerCustomAliases, 0);
@@ -3009,6 +3076,138 @@ async function cloudSaveBW() {
   if (!_db || !_uid) return;
   try { await userDoc('bodyweight').set({ entries: state.bodyweight, updatedAt: Date.now() }); }
   catch(e) { console.error('BW cloud save failed:', e); }
+}
+
+// ══════════════════════════════════════════════════════════════════ BLOOD PRESSURE
+
+function switchBodyTab(btn, tabId) {
+  document.querySelectorAll('#body .tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('body-weight-tab').classList.toggle('hidden', tabId !== 'body-weight-tab');
+  document.getElementById('body-bp-tab').classList.toggle('hidden', tabId !== 'body-bp-tab');
+  document.getElementById('bw-import-btn').classList.toggle('hidden', tabId !== 'body-weight-tab');
+  document.getElementById('bp-export-btn').classList.toggle('hidden', tabId !== 'body-bp-tab');
+  if (tabId === 'body-bp-tab') renderBP();
+}
+
+function bpCategory(sys, dia) {
+  if (sys > 180 || dia > 120) return { label: 'Crisis',    color: '#c0392b', bg: '#2d0a0a' };
+  if (sys >= 140 || dia >= 90) return { label: 'High II',   color: '#e74c3c', bg: '#2d1010' };
+  if (sys >= 130 || dia >= 80) return { label: 'High I',    color: '#e67e22', bg: '#2d1a08' };
+  if (sys >= 120 && dia < 80)  return { label: 'Elevated',  color: '#f1c40f', bg: '#2d2a08' };
+  return                               { label: 'Normal',   color: '#3ecf74', bg: '#0a2d18' };
+}
+
+function logBP() {
+  const sys   = parseInt(document.getElementById('bp-sys').value);
+  const dia   = parseInt(document.getElementById('bp-dia').value);
+  const pulse = parseInt(document.getElementById('bp-pulse').value) || null;
+  const date  = document.getElementById('bp-date').value || new Date().toISOString().split('T')[0];
+  const time  = document.getElementById('bp-time').value || '';
+  const note  = document.getElementById('bp-note').value.trim();
+
+  if (!sys || !dia) return toast('Enter systolic and diastolic values');
+  if (sys < 60 || sys > 250) return toast('Systolic looks out of range (60–250)');
+  if (dia < 40 || dia > 150) return toast('Diastolic looks out of range (40–150)');
+
+  state.bloodpressure.push({ date, time, sys, dia, pulse, note });
+  state.bloodpressure.sort((a, b) => (b.date + b.time).localeCompare(a.date + a.time));
+  localStorage.setItem('bloodpressure', JSON.stringify(state.bloodpressure));
+
+  // Clear fields (keep date/time for quick repeat entries)
+  ['bp-sys','bp-dia','bp-pulse','bp-note'].forEach(id => document.getElementById(id).value = '');
+
+  renderBP();
+  toast('Reading saved ✓');
+}
+
+function deleteBPEntry(i) {
+  if (!confirm('Delete this reading?')) return;
+  state.bloodpressure.splice(i, 1);
+  localStorage.setItem('bloodpressure', JSON.stringify(state.bloodpressure));
+  renderBP();
+  toast('Reading deleted');
+}
+
+function renderBP() {
+  const entries = state.bloodpressure || [];
+  document.getElementById('bp-entry-count').textContent = entries.length ? `${entries.length} reading${entries.length !== 1 ? 's' : ''}` : '';
+
+  // Stats
+  const statsEl = document.getElementById('bp-stats');
+  if (entries.length) {
+    const latest = entries[0];
+    const cat = bpCategory(latest.sys, latest.dia);
+    const avgSys = Math.round(entries.reduce((s, e) => s + e.sys, 0) / entries.length);
+    const avgDia = Math.round(entries.reduce((s, e) => s + e.dia, 0) / entries.length);
+    const avgCat = bpCategory(avgSys, avgDia);
+    statsEl.innerHTML = `
+      <div class="stat-card">
+        <div class="stat-value" style="font-size:1.3rem;color:${cat.color};">${latest.sys}/${latest.dia}</div>
+        <div class="stat-label">Latest<br><span style="font-size:.7rem;padding:2px 7px;border-radius:99px;background:${cat.bg};color:${cat.color};">${cat.label}</span></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" style="font-size:1.3rem;color:${avgCat.color};">${avgSys}/${avgDia}</div>
+        <div class="stat-label">Avg (all)<br><span style="font-size:.7rem;padding:2px 7px;border-radius:99px;background:${avgCat.bg};color:${avgCat.color};">${avgCat.label}</span></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" style="font-size:1.3rem;color:var(--accent2);">${entries[0].pulse || '—'}</div>
+        <div class="stat-label">Latest Pulse<br><span style="font-size:.7rem;">bpm</span></div>
+      </div>`;
+  } else {
+    statsEl.innerHTML = '';
+  }
+
+  // History list
+  const histEl = document.getElementById('bp-history');
+  if (!entries.length) {
+    histEl.innerHTML = '<div class="empty" style="padding:28px;"><div class="icon">🩺</div><div>No readings yet.</div></div>';
+    return;
+  }
+  histEl.innerHTML = entries.map((e, i) => {
+    const cat = bpCategory(e.sys, e.dia);
+    return `<div style="display:flex;align-items:center;gap:10px;padding:11px 16px;border-bottom:1px solid var(--border);">
+      <div style="flex:1;min-width:0;">
+        <div style="display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;">
+          <span style="font-size:1.05rem;font-weight:700;color:${cat.color};">${e.sys}/${e.dia}</span>
+          <span style="font-size:.72rem;padding:1px 7px;border-radius:99px;background:${cat.bg};color:${cat.color};font-weight:700;">${cat.label}</span>
+          ${e.pulse ? `<span style="font-size:.8rem;color:var(--text2);">♥ ${e.pulse} bpm</span>` : ''}
+        </div>
+        <div style="font-size:.78rem;color:var(--text2);margin-top:2px;">
+          ${formatDate(e.date)}${e.time ? ' · ' + e.time : ''}${e.note ? ' · ' + e.note : ''}
+        </div>
+      </div>
+      <button class="btn btn-danger btn-xs" onclick="deleteBPEntry(${i})">✕</button>
+    </div>`;
+  }).join('');
+}
+
+function exportBPcsv() {
+  const entries = state.bloodpressure || [];
+  if (!entries.length) return toast('No readings to export');
+
+  const rows = [
+    ['Date', 'Time', 'Systolic (mmHg)', 'Diastolic (mmHg)', 'Pulse (bpm)', 'Category', 'Notes'],
+    ...entries.map(e => [
+      e.date,
+      e.time || '',
+      e.sys,
+      e.dia,
+      e.pulse || '',
+      bpCategory(e.sys, e.dia).label,
+      e.note || '',
+    ])
+  ];
+
+  const csv = rows.map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href     = url;
+  a.download = `blood-pressure-${new Date().toISOString().split('T')[0]}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+  toast(`Exported ${entries.length} readings`);
 }
 
 // ══════════════════════════════════════════════════════════════════ CALENDAR
