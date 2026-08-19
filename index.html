@@ -2583,6 +2583,7 @@ async function cloudSave() {
     await userDoc('workouts').set({ workouts: state.workouts, updatedAt: Date.now() });
     await userDoc('movements').set({ movements: customMovements, updatedAt: Date.now() });
     if (state.bodyweight?.length) await userDoc('bodyweight').set({ entries: state.bodyweight, updatedAt: Date.now() });
+    if (state.bloodpressure?.length) await userDoc('bloodpressure').set({ entries: state.bloodpressure, updatedAt: Date.now() });
     setSyncUI('signedIn', _auth.currentUser);
     const msg = `Last synced ${new Date().toLocaleTimeString()}`;
     const el = document.getElementById('sync-status-msg');
@@ -2635,6 +2636,16 @@ async function loadFromCloud() {
       localStorage.setItem('bodyweight', JSON.stringify(state.bodyweight));
     }
 
+    // Blood pressure
+    const bpSnap = await userDoc('bloodpressure').get().catch(()=>null);
+    if (bpSnap?.exists) {
+      const cloudBP = bpSnap.data().entries || [];
+      const localKeys = new Set((state.bloodpressure||[]).map(e => e.date + e.time));
+      cloudBP.forEach(e => { if (!localKeys.has(e.date + e.time)) { state.bloodpressure = state.bloodpressure||[]; state.bloodpressure.push(e); } });
+      state.bloodpressure.sort((a,b) => (b.date+b.time).localeCompare(a.date+a.time));
+      localStorage.setItem('bloodpressure', JSON.stringify(state.bloodpressure));
+    }
+
     renderHistory();
     renderLibrary();
     setSyncUI('signedIn', _auth.currentUser);
@@ -2654,10 +2665,11 @@ async function forcePullFromCloud() {
   if (!_db || !_uid) return toast('Not signed in');
   toast('Pulling from cloud…');
   try {
-    const [wSnap, mSnap, bwSnap] = await Promise.all([
+    const [wSnap, mSnap, bwSnap, bpSnap] = await Promise.all([
       userDoc('workouts').get(),
       userDoc('movements').get(),
       userDoc('bodyweight').get().catch(() => null),
+      userDoc('bloodpressure').get().catch(() => null),
     ]);
     if (wSnap.exists) { state.workouts = wSnap.data().workouts || []; localStorage.setItem('workouts', JSON.stringify(state.workouts)); }
     if (mSnap.exists) {
@@ -2669,6 +2681,11 @@ async function forcePullFromCloud() {
     if (bwSnap?.exists) {
       state.bodyweight = bwSnap.data().entries || [];
       localStorage.setItem('bodyweight', JSON.stringify(state.bodyweight));
+    }
+    if (bpSnap?.exists) {
+      state.bloodpressure = bpSnap.data().entries || [];
+      state.bloodpressure.sort((a,b) => (b.date+b.time).localeCompare(a.date+a.time));
+      localStorage.setItem('bloodpressure', JSON.stringify(state.bloodpressure));
     }
     renderHistory(); renderLibrary();
     setSyncUI('signedIn', _auth.currentUser);
@@ -3113,6 +3130,7 @@ function logBP() {
   state.bloodpressure.push({ date, time, sys, dia, pulse, note });
   state.bloodpressure.sort((a, b) => (b.date + b.time).localeCompare(a.date + a.time));
   localStorage.setItem('bloodpressure', JSON.stringify(state.bloodpressure));
+  if (_uid) cloudSave();
 
   // Clear fields (keep date/time for quick repeat entries)
   ['bp-sys','bp-dia','bp-pulse','bp-note'].forEach(id => document.getElementById(id).value = '');
@@ -3125,6 +3143,7 @@ function deleteBPEntry(i) {
   if (!confirm('Delete this reading?')) return;
   state.bloodpressure.splice(i, 1);
   localStorage.setItem('bloodpressure', JSON.stringify(state.bloodpressure));
+  if (_uid) cloudSave();
   renderBP();
   toast('Reading deleted');
 }
